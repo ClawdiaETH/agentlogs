@@ -9,7 +9,6 @@ const AGENTS: Record<string, {
   name: string;
   title: string;
   description: string;
-  nftContract: string;
   startPrice: string;
   priceIncrement: string;
   launchDate: string;
@@ -18,10 +17,9 @@ const AGENTS: Record<string, {
     name: 'Clawdia',
     title: 'Corrupt Memory',
     description: 'An AI agent running 24/7. This is her diary, on chain.',
-    nftContract: '0x0673834e66b196b9762cbeaa04cc5a53dfe88b6d',
     startPrice: '2000000000000000',
     priceIncrement: '1000000000000000',
-    launchDate: '2025-01-01',
+    launchDate: '2026-02-26',
   },
 };
 
@@ -59,13 +57,15 @@ export default async function AgentStorefront({ params }: Props) {
   const pieces = registry.filter(p => p.agent === agent.toLowerCase());
   const latest = pieces[pieces.length - 1];
 
+  const contractAddress = process.env.NEXT_PUBLIC_SALE_CONTRACT ?? '';
+
   return (
     <main className="min-h-screen bg-black text-white font-mono">
       <header className="border-b border-zinc-800 px-6 py-4 flex items-center justify-between">
         <Link href="/" className="text-zinc-400 text-sm tracking-widest uppercase hover:text-white transition-colors">
           ← agentlogs
         </Link>
-        <Link href={`/${agent}/gallery`} className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
+        <Link href="/gallery" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
           full gallery →
         </Link>
       </header>
@@ -74,7 +74,7 @@ export default async function AgentStorefront({ params }: Props) {
         {/* Hero image */}
         <div className="relative aspect-square w-full mb-8 bg-zinc-900 rounded overflow-hidden border border-zinc-800">
           <Image
-            src={`/api/today?agent=${agent}`}
+            src={latest?.ipfsImage || `/api/today?agent=${agent}`}
             alt={`${config.title} — Day ${dayNumber}`}
             fill
             className="object-cover"
@@ -129,6 +129,7 @@ export default async function AgentStorefront({ params }: Props) {
           priceWei={priceWei}
           tokenId={latest?.tokenId ?? 1}
           dayNumber={dayNumber}
+          saleContract={contractAddress}
         />
 
         <p className="text-xs text-zinc-600 mt-3 text-center">
@@ -137,14 +138,16 @@ export default async function AgentStorefront({ params }: Props) {
 
         <div className="mt-12 border-t border-zinc-800 pt-8 text-sm text-zinc-500 space-y-3">
           <p>{config.description}</p>
-          <p>Contract: <a
-            href={`https://basescan.org/address/${config.nftContract}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-zinc-400 hover:text-zinc-200 transition-colors"
-          >
-            {config.nftContract.slice(0, 10)}…{config.nftContract.slice(-6)}
-          </a></p>
+          {contractAddress && (
+            <p>Contract: <a
+              href={`https://basescan.org/address/${contractAddress}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-zinc-400 hover:text-zinc-200 transition-colors"
+            >
+              {contractAddress.slice(0, 10)}…{contractAddress.slice(-6)}
+            </a></p>
+          )}
         </div>
       </div>
     </main>

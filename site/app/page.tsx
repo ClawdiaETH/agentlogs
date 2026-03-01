@@ -4,7 +4,7 @@ import BuyButton from '@/components/BuyButton';
 import registry from '../data/registry.json';
 
 function getDayNumber(): number {
-  const launch = new Date('2025-01-01');
+  const launch = new Date('2026-02-26');
   const now = new Date();
   const diff = Math.floor((now.getTime() - launch.getTime()) / (1000 * 60 * 60 * 24));
   return Math.max(1, diff + 1);
@@ -46,7 +46,7 @@ export default function Home() {
         {/* Hero image */}
         <div className="relative aspect-square w-full mb-8 bg-zinc-900 rounded overflow-hidden border border-zinc-800">
           <Image
-            src="/api/today"
+            src={piece.ipfsImage || '/api/today'}
             alt={`Corrupt Memory — Day ${dayNumber}`}
             fill
             className="object-cover"

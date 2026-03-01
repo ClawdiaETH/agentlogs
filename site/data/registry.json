@@ -2,22 +2,21 @@
   {
     "tokenId": 1,
     "dayNumber": 1,
-    "date": "2025-01-01",
+    "date": "2026-02-26",
     "agent": "clawdia",
     "title": "Corrupt Memory",
-    "image": "/api/today",
-    "ipfsImage": "",
-    "ipfsMetadata": "",
+    "ipfsImage": "https://gateway.pinata.cloud/ipfs/QmeKzy71eRfB1ZcbH9rRaYiiDmWNpLcXsTXfm5dYjY6CgV",
+    "ipfsMetadata": "ipfs://QmVkACHEsVDRHoqjFRXgcH6ccAbbRMWrqUdF4Lt2YhjLHj",
     "price": "2000000000000000",
     "priceEth": "0.002",
     "sold": false,
     "buyer": null,
     "txHash": null,
-    "palette": ["#1a0533", "#6b21a8", "#a855f7", "#d8b4fe", "#f5f0ff"],
+    "palette": ["#0a0a0a", "#1a0533", "#6b21a8", "#a855f7", "#f5f0ff"],
     "stats": {
-      "commits": 0,
-      "errors": 0,
-      "messages": 0
+      "commits": 9,
+      "errors": 43,
+      "messages": 237
     }
   }
 ]

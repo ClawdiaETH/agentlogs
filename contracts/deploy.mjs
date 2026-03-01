@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Deploy AgentSale.sol to Base mainnet (or testnet).
+ * Deploy AgentCollection.sol to Base mainnet (or testnet).
  * Usage: node deploy.mjs [--testnet]
  *
  * Reads private key via: ~/clawd/scripts/get-secret.sh signing_key
@@ -22,7 +22,8 @@ const RPC_URL = TESTNET
   : 'https://mainnet.base.org';
 
 // Clawdia collection config
-const NFT_CONTRACT  = '0x0673834e66b196b9762cbeaa04cc5a53dfe88b6d';
+const COLLECTION_NAME = 'Corrupt Memory';
+const COLLECTION_SYMBOL = 'CORRUPT';
 const OWNER_ADDRESS = '0xf17b5dD382B048Ff4c05c1C9e4E24cfC5C6adAd9';
 const START_PRICE   = '2000000000000000';   // 0.002 ETH in wei
 const PRICE_INC     = '1000000000000000';   // 0.001 ETH in wei
@@ -32,7 +33,7 @@ function getSecret(key) {
 }
 
 function loadArtifact() {
-  const artifactPath = path.join(__dirname, 'artifacts/src/AgentSale.sol/AgentSale.json');
+  const artifactPath = path.join(__dirname, 'artifacts/src/AgentCollection.sol/AgentCollection.json');
   if (!fs.existsSync(artifactPath)) {
     throw new Error(
       `Artifact not found at ${artifactPath}.\n` +
@@ -54,11 +55,11 @@ function updateConfig(contractAddress) {
 
   config = {
     agentSlug:      config.agentSlug      ?? 'clawdia',
-    nftContract:    NFT_CONTRACT,
-    saleContract:   contractAddress,
+    contractAddress: contractAddress,
     ownerAddress:   OWNER_ADDRESS,
     startPrice:     START_PRICE,
     priceIncrement: PRICE_INC,
+    launchDate:     config.launchDate     ?? '2026-02-26',
   };
 
   fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
@@ -66,7 +67,7 @@ function updateConfig(contractAddress) {
 }
 
 async function main() {
-  console.log(`Deploying AgentSale to ${TESTNET ? 'Base Sepolia testnet' : 'Base mainnet'}…`);
+  console.log(`Deploying AgentCollection to ${TESTNET ? 'Base Sepolia testnet' : 'Base mainnet'}…`);
 
   const privateKey = getSecret('signing_key');
   const provider   = new ethers.JsonRpcProvider(RPC_URL);
@@ -81,25 +82,26 @@ async function main() {
 
   console.log('Deploying…');
   const contract = await factory.deploy(
-    NFT_CONTRACT,
-    OWNER_ADDRESS,
+    COLLECTION_NAME,
+    COLLECTION_SYMBOL,
     START_PRICE,
     PRICE_INC
   );
   await contract.waitForDeployment();
 
   const address = await contract.getAddress();
-  console.log(`\n✅ AgentSale deployed at: ${address}`);
+  console.log(`\n✅ AgentCollection deployed at: ${address}`);
   console.log(`   Network: ${TESTNET ? 'Base Sepolia' : 'Base mainnet'}`);
-  console.log(`   NFT contract: ${NFT_CONTRACT}`);
+  console.log(`   Name: ${COLLECTION_NAME}`);
+  console.log(`   Symbol: ${COLLECTION_SYMBOL}`);
   console.log(`   Owner: ${OWNER_ADDRESS}`);
   console.log(`   Start price: ${ethers.formatEther(START_PRICE)} ETH`);
   console.log(`   Price increment: ${ethers.formatEther(PRICE_INC)} ETH/day`);
 
   updateConfig(address);
 
-  // Print ABI for reference
-  const abiPath = path.join(__dirname, 'AgentSale.abi.json');
+  // Save ABI for reference
+  const abiPath = path.join(__dirname, 'AgentCollection.abi.json');
   fs.writeFileSync(abiPath, JSON.stringify(artifact.abi, null, 2));
   console.log(`\nABI saved to: ${abiPath}`);
 }

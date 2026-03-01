@@ -8,8 +8,9 @@ module.exports = {
     cache: "./cache",
   },
   solidity: {
-    version: "0.8.20",
+    version: "0.8.27",
     settings: {
+      evmVersion: "cancun",
       optimizer: {
         enabled: true,
         runs: 200
