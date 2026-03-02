@@ -11,7 +11,7 @@
  *
  * Usage:
  *   node scripts/mint-and-list.mjs              # full run
- *   node scripts/mint-and-list.mjs --dry-run    # skip on-chain + IPFS, render only
+ *   node scripts/mint-and-list.mjs --dry-run    # skip onchain + IPFS, render only
  *   node scripts/mint-and-list.mjs --day 42     # override day number
  */
 
@@ -230,7 +230,7 @@ async function assembleDayLog(config, dayNumber) {
 
 // ─── Step 2: Render image ─────────────────────────────────────────────────────
 
-async function renderImage(dayLog) {
+async function renderImage(_dayLog) {
   log('Step 2: Rendering image…');
   const rendererPath = path.join(CLAWDIA_DIR, 'render-cli.js');
 
@@ -364,7 +364,7 @@ async function mintNFT(config, metadataUri, wallet) {
 // ─── Step 6: Update registry ──────────────────────────────────────────────────
 
 function updateRegistry(config, dayLog, tokenId, imageUri, metadataUri, mintTxHash) {
-  const registryPath = path.join(AGENTLOGS_DIR, 'site/data/registry.json');
+  const registryPath = path.join(AGENTLOGS_DIR, 'data/registry.json');
   let registry = [];
   if (fs.existsSync(registryPath)) {
     registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
@@ -431,7 +431,7 @@ async function main() {
     log(`   Colors:  ${dayLog.palette.join(' ')}`);
     log(`   Image:   /tmp/piece.png`);
     log(`   DayLog:  /tmp/daylog.json`);
-    log('   Re-run without --dry-run to mint and list on-chain.');
+    log('   Re-run without --dry-run to mint and list onchain.');
     return;
   }
 

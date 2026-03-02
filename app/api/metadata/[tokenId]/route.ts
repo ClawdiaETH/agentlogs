@@ -30,21 +30,48 @@ export async function GET(request: Request, { params }: Props) {
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://agentlogs.xyz';
 
-  // ERC-721 metadata standard
+  // Build first-person description from stats
+  const stats = piece.stats ?? {};
+  const commitCount = stats.commits ?? 0;
+  const errors = stats.errors ?? 0;
+  const mcap = stats.mcap ?? 0;
+  const change24h = stats.change24h ?? 0;
+  const changeStr = change24h >= 0 ? `up ${change24h.toFixed(1)}%` : `down ${Math.abs(change24h).toFixed(1)}%`;
+  let mcapStr: string;
+  if (mcap >= 1_000_000) mcapStr = `$${(mcap / 1_000_000).toFixed(2)}M`;
+  else if (mcap >= 1_000) mcapStr = `$${(mcap / 1_000).toFixed(1)}K`;
+  else mcapStr = `$${mcap}`;
+
+  const description = `Day ${piece.dayNumber}. ${commitCount} commit${commitCount !== 1 ? 's' : ''}. ${errors} error${errors !== 1 ? 's' : ''}. $CLAWDIA market cap ${mcapStr}, ${changeStr}.`;
+
+  const glitchIndex = stats.glitchIndex ?? 0;
+  const momentum = change24h > 2 ? 'Bullish' : change24h < -2 ? 'Bearish' : 'Neutral';
+
+  // ERC-721 metadata standard — 15+ attributes
   const metadata = {
     name: `${piece.title || 'Corrupt Memory'} — Day ${piece.dayNumber}`,
-    description: `Daily generative art by ${piece.agent}. Day ${piece.dayNumber} of 365. Each piece is a data portrait of that day's operations: commits, errors, trades, messages.`,
+    description,
     image: piece.ipfsImage || `${baseUrl}/api/today`,
     external_url: `${baseUrl}/${piece.agent}`,
     attributes: [
-      { trait_type: 'Agent',      value: piece.agent      },
-      { trait_type: 'Day',        value: piece.dayNumber  },
-      { trait_type: 'Date',       value: piece.date       },
-      { trait_type: 'Commits',    value: piece.stats.commits   },
-      { trait_type: 'Errors',     value: piece.stats.errors    },
-      { trait_type: 'Messages',   value: piece.stats.messages  },
-      { trait_type: 'Price (ETH)', value: piece.priceEth      },
-      { trait_type: 'Status',     value: piece.sold ? 'Sold' : 'Available' },
+      { trait_type: 'Agent',            value: piece.agent },
+      { trait_type: 'Day',              value: piece.dayNumber },
+      { trait_type: 'Date',             value: piece.date },
+      { trait_type: 'Palette',          value: piece.paletteLabel ?? piece.paletteName ?? 'Unknown' },
+      { trait_type: 'Palette ID',       value: piece.paletteId ?? piece.paletteName ?? 'UNKNOWN' },
+      { trait_type: 'Commit Count',     value: commitCount },
+      { trait_type: 'Errors',           value: errors },
+      { trait_type: 'Messages',         value: stats.messages ?? 0 },
+      { trait_type: 'Txns',             value: stats.txns ?? 0 },
+      { trait_type: 'Posts',            value: stats.posts ?? 0 },
+      { trait_type: 'Peak Hour UTC',    value: `${String(stats.peakHour ?? 12).padStart(2, '0')}:00` },
+      { trait_type: 'Glitch Index',     value: Math.round(glitchIndex) },
+      { trait_type: 'MCAP USD',         value: Math.round(mcap) },
+      { trait_type: '24h Change',       value: parseFloat(change24h.toFixed(2)) },
+      { trait_type: 'Momentum',         value: momentum },
+      { trait_type: 'Price (ETH)',      value: piece.priceEth },
+      { trait_type: 'Status',           value: piece.sold ? 'Sold' : 'Available' },
+      { trait_type: 'Renderer Version', value: 'v2' },
     ],
   };
 

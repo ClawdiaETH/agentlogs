@@ -2,6 +2,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import BuyButton from '@/components/BuyButton';
+import LivePrice from '@/components/LivePrice';
+import StatsGrid from '@/components/StatsGrid';
 import registry from '../../data/registry.json';
 
 // Known agents — extend as more agents onboard
@@ -65,9 +67,12 @@ export default async function AgentStorefront({ params }: Props) {
         <Link href="/" className="text-zinc-400 text-sm tracking-widest uppercase hover:text-white transition-colors">
           ← agentlogs
         </Link>
-        <Link href="/gallery" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
-          full gallery →
-        </Link>
+        <div className="flex items-center gap-4">
+          <LivePrice />
+          <Link href="/gallery" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
+            full gallery →
+          </Link>
+        </div>
       </header>
 
       <div className="max-w-2xl mx-auto px-6 py-16">
@@ -94,32 +99,12 @@ export default async function AgentStorefront({ params }: Props) {
 
         {/* Data strip */}
         {latest && (
-          <div className="grid grid-cols-4 gap-3 mb-8 border border-zinc-800 rounded p-4 bg-zinc-950">
-            <div>
-              <p className="text-xs text-zinc-600 uppercase tracking-wider">commits</p>
-              <p className="text-lg font-bold text-purple-400">{latest.stats.commits}</p>
-            </div>
-            <div>
-              <p className="text-xs text-zinc-600 uppercase tracking-wider">errors</p>
-              <p className="text-lg font-bold text-red-400">{latest.stats.errors}</p>
-            </div>
-            <div>
-              <p className="text-xs text-zinc-600 uppercase tracking-wider">messages</p>
-              <p className="text-lg font-bold text-blue-400">{latest.stats.messages}</p>
-            </div>
-            <div>
-              <p className="text-xs text-zinc-600 uppercase tracking-wider">palette</p>
-              <div className="flex gap-1 mt-1">
-                {latest.palette.map((color: string, i: number) => (
-                  <div
-                    key={i}
-                    className="w-4 h-4 rounded-sm"
-                    style={{ backgroundColor: color }}
-                    title={color}
-                  />
-                ))}
-              </div>
-            </div>
+          <div className="mb-8">
+            <StatsGrid
+              stats={latest.stats}
+              palette={latest.palette}
+              paletteLabel={(latest as Record<string, unknown>).paletteLabel as string ?? latest.paletteName}
+            />
           </div>
         )}
 
