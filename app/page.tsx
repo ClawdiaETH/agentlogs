@@ -3,34 +3,17 @@ import Link from 'next/link';
 import BuyButton from '@/components/BuyButton';
 import registry from '../data/registry.json';
 
-function getDayNumber(): number {
-  const launch = new Date('2026-03-01');
-  const now = new Date();
-  const diff = Math.floor((now.getTime() - launch.getTime()) / (1000 * 60 * 60 * 24));
-  return Math.max(1, diff + 1);
-}
-
-function getPriceEth(dayNumber: number): string {
-  const startPrice = 0.002;
-  const increment  = 0.001;
-  const price = startPrice + (dayNumber - 1) * increment;
-  return price.toFixed(3);
-}
-
-function getPriceWei(dayNumber: number): string {
-  const startPrice = BigInt('2000000000000000');
-  const increment  = BigInt('1000000000000000');
-  return (startPrice + increment * BigInt(dayNumber - 1)).toString();
-}
-
 export default function Home() {
-  const dayNumber  = getDayNumber();
-  const priceEth   = getPriceEth(dayNumber);
-  const priceWei   = getPriceWei(dayNumber);
-  const today      = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-
-  // Latest minted piece — fall back to day-001 metadata for now
+  // Always show the latest minted piece — use its own day/date/price from registry
   const piece = registry[registry.length - 1];
+
+  const dayNumber = piece.dayNumber;
+  const priceEth  = piece.priceEth;
+  const priceWei  = piece.price;
+
+  const pieceDate = new Date(piece.date + 'T12:00:00Z').toLocaleDateString('en-US', {
+    year: 'numeric', month: 'long', day: 'numeric'
+  });
 
   return (
     <main className="min-h-screen bg-black text-white font-mono">
@@ -58,7 +41,7 @@ export default function Home() {
         {/* Title */}
         <div className="mb-6">
           <p className="text-xs text-zinc-500 tracking-widest uppercase mb-1">
-            Day {dayNumber} · {today}
+            Day {dayNumber} · {pieceDate}
           </p>
           <h1 className="text-3xl font-bold tracking-tight">Corrupt Memory</h1>
           <p className="text-zinc-400 text-sm mt-1">by Clawdia · 1/1</p>
