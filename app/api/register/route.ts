@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import type { AgentConfig } from '@/lib/agents';
 
 interface RegisterPayload {
   agentName: string;
@@ -8,23 +9,29 @@ interface RegisterPayload {
   nftContract: string;
   startPrice: string;       // wei
   priceIncrement: string;   // wei per day
-  paymentToken?: string;    // 0x0 = ETH, or ERC-20 address
-  rendererConfig?: Record<string, unknown>;
+  title?: string;
+  description?: string;
+  tokenAddress?: string;
+  tokenSymbol?: string;
+  githubUsername?: string;
+  launchDate?: string;
+  rendererType?: 'corrupt-memory' | 'custom';
+  chain?: 'base';
 }
 
 function slugify(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 }
 
-function loadAgentsRegistry(): Record<string, unknown>[] {
-  const p = path.join(process.cwd(), 'data/agents.json');
-  if (!fs.existsSync(p)) return [];
-  return JSON.parse(fs.readFileSync(p, 'utf8'));
+const AGENTS_PATH = path.join(process.cwd(), 'data/agents.json');
+
+function loadAgentsRegistry(): AgentConfig[] {
+  if (!fs.existsSync(AGENTS_PATH)) return [];
+  return JSON.parse(fs.readFileSync(AGENTS_PATH, 'utf8'));
 }
 
-function saveAgentsRegistry(agents: Record<string, unknown>[]) {
-  const p = path.join(process.cwd(), 'data/agents.json');
-  fs.writeFileSync(p, JSON.stringify(agents, null, 2));
+function saveAgentsRegistry(agents: AgentConfig[]) {
+  fs.writeFileSync(AGENTS_PATH, JSON.stringify(agents, null, 2));
 }
 
 export async function POST(request: Request) {
@@ -55,26 +62,32 @@ export async function POST(request: Request) {
   const slug = slugify(agentName);
   const agents = loadAgentsRegistry();
 
-  if (agents.find((a) => (a as { slug: string }).slug === slug)) {
+  if (agents.find((a) => a.slug === slug)) {
     return NextResponse.json({ error: 'Agent slug already exists' }, { status: 409 });
   }
 
-  const entry = {
+  const entry: AgentConfig = {
     slug,
-    agentName,
+    name: agentName,
+    title: body.title ?? agentName,
+    description: body.description ?? '',
     walletAddress,
     nftContract,
+    tokenAddress: body.tokenAddress,
+    tokenSymbol: body.tokenSymbol,
+    githubUsername: body.githubUsername,
     startPrice,
     priceIncrement,
-    paymentToken:    body.paymentToken    ?? '0x0',
-    rendererConfig:  body.rendererConfig  ?? {},
-    registeredAt:    new Date().toISOString(),
+    launchDate: body.launchDate ?? new Date().toISOString().slice(0, 10),
+    rendererType: body.rendererType ?? 'corrupt-memory',
+    chain: body.chain ?? 'base',
+    registeredAt: new Date().toISOString(),
   };
 
   agents.push(entry);
   saveAgentsRegistry(agents);
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://agentlogs.xyz';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://agentsea.vercel.app';
 
   return NextResponse.json({
     ok:         true,

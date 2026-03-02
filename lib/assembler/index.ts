@@ -2,6 +2,7 @@ import { fetchDexData } from './dexscreener';
 import { fetchGitHubData } from './github';
 import { fetchOperationalData } from './operational';
 import { selectPalette, computeGlitchIndex } from '../renderer/palette';
+import type { AgentConfig } from '../agents';
 import type { DayLog } from '../renderer/types';
 
 /**
@@ -12,10 +13,11 @@ export async function assembleDayLog(
   dayNumber: number,
   date: string,
   agentSlug: string,
+  agentConfig?: AgentConfig,
 ): Promise<DayLog> {
   const [dex, github, ops] = await Promise.all([
-    fetchDexData(),
-    fetchGitHubData(),
+    fetchDexData(agentConfig?.tokenAddress),
+    fetchGitHubData(agentConfig?.githubUsername),
     fetchOperationalData(),
   ]);
 
@@ -47,6 +49,7 @@ export async function assembleDayLog(
     date,
     agent: agentSlug,
     seed,
+    tokenSymbol: agentConfig?.tokenSymbol,
 
     // DexScreener
     priceUsd: dex.priceUsd,

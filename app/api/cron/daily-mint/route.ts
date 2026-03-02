@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { runPipeline } from '@/lib/pipeline';
+import { loadAgents } from '@/lib/agents';
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 export async function GET(request: Request) {
   // Verify cron secret
@@ -12,39 +13,49 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const contractAddress = process.env.NEXT_PUBLIC_SALE_CONTRACT;
   const privateKey = process.env.PRIVATE_KEY;
   const pinataJwt = process.env.PINATA_JWT;
   const githubToken = process.env.GITHUB_TOKEN;
 
-  if (!contractAddress || !privateKey || !pinataJwt || !githubToken) {
+  if (!privateKey || !pinataJwt || !githubToken) {
     return NextResponse.json(
       { error: 'Missing required environment variables' },
       { status: 500 },
     );
   }
 
-  try {
-    const result = await runPipeline({
-      pinataJwt,
-      privateKey,
-      githubToken,
-      contractAddress,
-      startPrice: '2000000000000000',
-      priceIncrement: '1000000000000000',
-      launchDate: '2026-03-01',
-      agentSlug: 'clawdia',
-    });
+  const agents = loadAgents();
+  const results: Record<string, unknown>[] = [];
 
-    return NextResponse.json({
-      success: true,
-      ...result,
-    });
-  } catch (err) {
-    console.error('Pipeline failed:', err);
-    return NextResponse.json(
-      { error: 'Pipeline failed', message: (err as Error).message },
-      { status: 500 },
-    );
+  // Sequential to avoid registry.json race conditions
+  for (const agent of agents) {
+    try {
+      const result = await runPipeline({
+        pinataJwt,
+        privateKey,
+        githubToken,
+        contractAddress: agent.nftContract,
+        startPrice: agent.startPrice,
+        priceIncrement: agent.priceIncrement,
+        launchDate: agent.launchDate,
+        agentSlug: agent.slug,
+        tokenAddress: agent.tokenAddress,
+        githubUsername: agent.githubUsername,
+        tokenSymbol: agent.tokenSymbol,
+        seriesTitle: agent.title,
+        agentConfig: agent,
+      });
+
+      results.push({ agent: agent.slug, success: true, ...result });
+    } catch (err) {
+      console.error(`Pipeline failed for ${agent.slug}:`, err);
+      results.push({
+        agent: agent.slug,
+        success: false,
+        error: (err as Error).message,
+      });
+    }
   }
+
+  return NextResponse.json({ results });
 }

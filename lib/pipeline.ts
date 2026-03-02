@@ -3,9 +3,10 @@ import { renderImage } from './renderer';
 import { uploadImage, uploadMetadata } from './pinata';
 import { mintNFT } from './contract';
 import { commitRegistry } from './github-commit';
+import type { AgentConfig } from './agents';
 import type { DayLog } from './renderer/types';
 
-interface PipelineSecrets {
+export interface PipelineSecrets {
   pinataJwt: string;
   privateKey: string;
   githubToken: string;
@@ -14,6 +15,11 @@ interface PipelineSecrets {
   priceIncrement: string;
   launchDate: string;
   agentSlug: string;
+  tokenAddress?: string;
+  githubUsername?: string;
+  tokenSymbol?: string;
+  seriesTitle?: string;
+  agentConfig?: AgentConfig;
 }
 
 interface PipelineResult {
@@ -35,22 +41,24 @@ function getDateStr(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-function buildERC721Metadata(dayLog: DayLog, imageUri: string, agentSlug: string) {
+function buildERC721Metadata(dayLog: DayLog, imageUri: string, agentSlug: string, seriesTitle?: string, tokenSymbol?: string) {
   const changeStr = dayLog.change24h >= 0 ? `up ${dayLog.change24h.toFixed(1)}%` : `down ${Math.abs(dayLog.change24h).toFixed(1)}%`;
   let mcapStr: string;
   if (dayLog.marketCap >= 1_000_000) mcapStr = `$${(dayLog.marketCap / 1_000_000).toFixed(2)}M`;
   else if (dayLog.marketCap >= 1_000) mcapStr = `$${(dayLog.marketCap / 1_000).toFixed(1)}K`;
   else mcapStr = `$${dayLog.marketCap.toFixed(0)}`;
 
-  const description = `Day ${dayLog.dayNumber}. ${dayLog.commitCount} commit${dayLog.commitCount !== 1 ? 's' : ''}${dayLog.reposActive.length > 0 ? ` across ${dayLog.reposActive.join(' and ')}` : ''}. ${dayLog.errors} error${dayLog.errors !== 1 ? 's' : ''}. $CLAWDIA market cap ${mcapStr}, ${changeStr}.`;
+  const symbol = tokenSymbol ?? dayLog.tokenSymbol ?? '$CLAWDIA';
+  const description = `Day ${dayLog.dayNumber}. ${dayLog.commitCount} commit${dayLog.commitCount !== 1 ? 's' : ''}${dayLog.reposActive.length > 0 ? ` across ${dayLog.reposActive.join(' and ')}` : ''}. ${dayLog.errors} error${dayLog.errors !== 1 ? 's' : ''}. ${symbol} market cap ${mcapStr}, ${changeStr}.`;
 
   const momentum = dayLog.change24h > 2 ? 'Bullish' : dayLog.change24h < -2 ? 'Bearish' : 'Neutral';
+  const title = seriesTitle ?? 'Corrupt Memory';
 
   return {
-    name: `Corrupt Memory — Day ${dayLog.dayNumber}`,
+    name: `${title} — Day ${dayLog.dayNumber}`,
     description,
     image: imageUri,
-    external_url: `https://agentlogs.xyz/${agentSlug}`,
+    external_url: `https://agentsea.vercel.app/${agentSlug}`,
     attributes: [
       { trait_type: 'Agent', value: agentSlug },
       { trait_type: 'Day', value: dayLog.dayNumber },
@@ -83,18 +91,19 @@ export async function runPipeline(secrets: PipelineSecrets): Promise<PipelineRes
   const date = getDateStr();
 
   // 1. Assemble day log
-  const dayLog = await assembleDayLog(dayNumber, date, secrets.agentSlug);
+  const dayLog = await assembleDayLog(dayNumber, date, secrets.agentSlug, secrets.agentConfig);
 
   // 2. Render image
   const imageBuffer = renderImage(dayLog);
 
   // 3. Upload image to IPFS
   const dayLabel = `day-${String(dayNumber).padStart(3, '0')}`;
-  const imageUri = await uploadImage(imageBuffer, `Corrupt Memory — ${dayLabel}`, secrets.pinataJwt);
+  const seriesTitle = secrets.seriesTitle ?? 'Corrupt Memory';
+  const imageUri = await uploadImage(imageBuffer, `${seriesTitle} — ${dayLabel}`, secrets.pinataJwt);
 
   // 4. Build + upload metadata to IPFS
-  const metadata = buildERC721Metadata(dayLog, imageUri, secrets.agentSlug);
-  const metadataUri = await uploadMetadata(metadata, `Corrupt Memory — ${dayLabel}`, secrets.pinataJwt);
+  const metadata = buildERC721Metadata(dayLog, imageUri, secrets.agentSlug, secrets.seriesTitle, secrets.tokenSymbol);
+  const metadataUri = await uploadMetadata(metadata, `${seriesTitle} — ${dayLabel}`, secrets.pinataJwt);
 
   // 5. Mint NFT
   const { tokenId, txHash } = await mintNFT(metadataUri, secrets.contractAddress, secrets.privateKey);
@@ -104,7 +113,7 @@ export async function runPipeline(secrets: PipelineSecrets): Promise<PipelineRes
   const getResp = await fetch(`${registryUrl}?ref=main`, {
     headers: {
       Authorization: `Bearer ${secrets.githubToken}`,
-      'User-Agent': 'agentlogs-pipeline',
+      'User-Agent': 'agentsea-pipeline',
     },
   });
 
@@ -126,7 +135,7 @@ export async function runPipeline(secrets: PipelineSecrets): Promise<PipelineRes
     dayNumber,
     date,
     agent: secrets.agentSlug,
-    title: 'Corrupt Memory',
+    title: seriesTitle,
     ipfsImage: ipfsImageUrl,
     ipfsMetadata: metadataUri,
     price: priceWei.toString(),
@@ -155,7 +164,7 @@ export async function runPipeline(secrets: PipelineSecrets): Promise<PipelineRes
 
   await commitRegistry(
     registryContent,
-    `mint: Day ${dayNumber} — ${dayLog.paletteLabel}`,
+    `mint: ${seriesTitle} Day ${dayNumber} — ${dayLog.paletteLabel}`,
     secrets.githubToken,
   );
 

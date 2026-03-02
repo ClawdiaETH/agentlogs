@@ -2,51 +2,49 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 
-const PALETTE_NAMES = [
-  'Incident', 'Graveyard', 'Sunrise', 'DeFi Day', 'Hypersocial', 'Twilight',
-  'Meridian', 'Golden Hour', 'Bankr Mode', 'Farcaster', 'Dormant', 'Surge',
-];
+interface AgentInfo {
+  slug: string;
+  name: string;
+}
 
-export default function PaletteFilter({ activePalettes }: { activePalettes: string[] }) {
+export default function AgentFilter({ agents }: { agents: AgentInfo[] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const current = searchParams.get('palette');
+  const current = searchParams.get('agent');
 
-  function handleClick(palette: string) {
+  if (agents.length <= 1) return null;
+
+  function handleClick(slug: string) {
     const params = new URLSearchParams(searchParams.toString());
-    if (current === palette) {
-      params.delete('palette');
+    if (current === slug) {
+      params.delete('agent');
     } else {
-      params.set('palette', palette);
+      params.set('agent', slug);
     }
     const qs = params.toString();
     router.push(qs ? `/gallery?${qs}` : '/gallery');
   }
 
-  // Only show palettes that actually exist in the registry
-  const available = PALETTE_NAMES.filter((p) => activePalettes.includes(p));
-  if (available.length <= 1) return null;
-
   return (
-    <div className="flex flex-wrap gap-2 mb-6">
-      {available.map((palette) => (
+    <div className="flex flex-wrap gap-2 mb-4">
+      {agents.map((agent) => (
         <button
-          key={palette}
-          onClick={() => handleClick(palette)}
+          key={agent.slug}
+          onClick={() => handleClick(agent.slug)}
           className={`text-xs px-3 py-1 rounded-full border transition-colors cursor-pointer ${
-            current === palette
-              ? 'border-purple-500 bg-purple-950 text-purple-300'
+            current === agent.slug
+              ? 'border-orange-500 bg-orange-950 text-orange-300'
               : 'border-zinc-700 text-zinc-500 hover:border-zinc-500 hover:text-zinc-300'
           }`}
         >
-          {palette}
+          {agent.name}
         </button>
       ))}
       {current && (
         <button
           onClick={() => {
             const params = new URLSearchParams(searchParams.toString());
-            params.delete('palette');
+            params.delete('agent');
             const qs = params.toString();
             router.push(qs ? `/gallery?${qs}` : '/gallery');
           }}

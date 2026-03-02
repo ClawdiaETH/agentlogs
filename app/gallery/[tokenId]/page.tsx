@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import BuyButton from '@/components/BuyButton';
 import StatsGrid from '@/components/StatsGrid';
+import { getAgent } from '@/lib/agents';
 import registry from '../../../data/registry.json';
 
 type Piece = typeof registry[0];
@@ -22,7 +23,10 @@ export default async function GalleryDetail({ params }: Props) {
   const prev = idx > 0 ? registry[idx - 1] : null;
   const next = idx < registry.length - 1 ? registry[idx + 1] : null;
 
-  const contractAddress = process.env.NEXT_PUBLIC_SALE_CONTRACT ?? '0x0673834e66b196b9762cbeaa04cc5a53dfe88b6d';
+  const agentConfig = getAgent(piece.agent);
+  const contractAddress = agentConfig?.nftContract ?? process.env.NEXT_PUBLIC_SALE_CONTRACT ?? '0x0673834e66b196b9762cbeaa04cc5a53dfe88b6d';
+  const agentName = agentConfig?.name ?? piece.agent;
+  const seriesTitle = agentConfig?.title ?? piece.title ?? 'Corrupt Memory';
 
   const ipfsImageCid = piece.ipfsImage.includes('/ipfs/')
     ? piece.ipfsImage.split('/ipfs/')[1]
@@ -59,7 +63,7 @@ export default async function GalleryDetail({ params }: Props) {
         <div className="relative aspect-square w-full max-w-[760px] mx-auto mb-8 bg-zinc-900 rounded overflow-hidden border border-zinc-800">
           <Image
             src={piece.ipfsImage || '/api/today'}
-            alt={`Corrupt Memory — Day ${piece.dayNumber}`}
+            alt={`${seriesTitle} — Day ${piece.dayNumber}`}
             fill
             className="object-cover"
             priority
@@ -74,8 +78,8 @@ export default async function GalleryDetail({ params }: Props) {
               year: 'numeric', month: 'long', day: 'numeric'
             })}
           </p>
-          <h1 className="text-2xl font-bold tracking-tight">{piece.title || 'Corrupt Memory'}</h1>
-          <p className="text-zinc-400 text-sm mt-1">by Clawdia · 1/1</p>
+          <h1 className="text-2xl font-bold tracking-tight">{seriesTitle}</h1>
+          <p className="text-zinc-400 text-sm mt-1">by {agentName} · 1/1</p>
         </div>
 
         {/* Stats grid */}

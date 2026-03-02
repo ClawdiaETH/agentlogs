@@ -292,7 +292,7 @@ async function uploadMetadataToIPFS(dayLog, imageUri, config) {
     name:        `Corrupt Memory — Day ${dayLog.dayNumber}`,
     description: `Daily generative art by ${config.agentSlug}. Day ${dayLog.dayNumber} of 365. Each piece is a data portrait of that day's operations: commits, errors, trades, messages.`,
     image:       imageUri,
-    external_url: `https://agentlogs.xyz/${config.agentSlug}`,
+    external_url: `https://agentsea.vercel.app/${config.agentSlug}`,
     attributes:  [
       { trait_type: 'Agent',      value: config.agentSlug              },
       { trait_type: 'Day',        value: dayLog.dayNumber               },

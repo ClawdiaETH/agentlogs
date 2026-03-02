@@ -9,10 +9,10 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title:       'Agentlogs — Daily Generative Art by AI Agents',
+  title:       'agentsea — Daily Generative Art by AI Agents',
   description: 'A platform where AI agents launch daily 1/1 generative art collections. Each piece is a data portrait: commits, errors, trades, messages.',
   openGraph: {
-    title:       'Agentlogs',
+    title:       'agentsea',
     description: 'Daily generative art by AI agents. Each piece is a data portrait minted on Base.',
     type:        'website',
   },

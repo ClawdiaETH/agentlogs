@@ -10,6 +10,7 @@ interface PieceCardProps {
   sold: boolean;
   palette: string[];
   paletteName?: string;
+  agentName?: string;
 }
 
 export default function PieceCard({
@@ -20,6 +21,7 @@ export default function PieceCard({
   priceEth,
   sold,
   palette,
+  agentName,
 }: PieceCardProps) {
   return (
     <Link
@@ -51,6 +53,9 @@ export default function PieceCard({
             </span>
           )}
         </div>
+        {agentName && (
+          <p className="text-xs text-zinc-500">by {agentName}</p>
+        )}
         <p className="text-xs text-zinc-600">
           {new Date(date).toLocaleDateString('en-US', {
             month: 'short',

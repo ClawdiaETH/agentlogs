@@ -1,5 +1,3 @@
-const TOKEN_ADDRESS = '0xbbd9aDe16525acb4B336b6dAd3b9762901522B07';
-
 interface DexData {
   priceUsd: number;
   marketCap: number;
@@ -24,10 +22,12 @@ const DEFAULTS: DexData = {
   momentumMag: 0,
 };
 
-export async function fetchDexData(): Promise<DexData> {
+export async function fetchDexData(tokenAddress?: string): Promise<DexData> {
+  if (!tokenAddress) return DEFAULTS;
+
   try {
     const resp = await fetch(
-      `https://api.dexscreener.com/token-pairs/v1/base/${TOKEN_ADDRESS}`,
+      `https://api.dexscreener.com/token-pairs/v1/base/${tokenAddress}`,
       { next: { revalidate: 0 } },
     );
 

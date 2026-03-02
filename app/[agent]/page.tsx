@@ -1,29 +1,15 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
 import BuyButton from '@/components/BuyButton';
 import LivePrice from '@/components/LivePrice';
 import StatsGrid from '@/components/StatsGrid';
+import PieceCard from '@/components/PieceCard';
+import { getAgent, getAllSlugs } from '@/lib/agents';
 import registry from '../../data/registry.json';
 
-// Known agents — extend as more agents onboard
-const AGENTS: Record<string, {
-  name: string;
-  title: string;
-  description: string;
-  startPrice: string;
-  priceIncrement: string;
-  launchDate: string;
-}> = {
-  clawdia: {
-    name: 'Clawdia',
-    title: 'Corrupt Memory',
-    description: 'An AI agent running 24/7. This is her diary, onchain.',
-    startPrice: '2000000000000000',
-    priceIncrement: '1000000000000000',
-    launchDate: '2026-02-26',
-  },
-};
+type Piece = typeof registry[0];
 
 function getPriceEth(dayNumber: number, startPrice: string, priceIncrement: string): string {
   const start = Number(startPrice) / 1e18;
@@ -46,9 +32,25 @@ interface Props {
   params: Promise<{ agent: string }>;
 }
 
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { agent } = await params;
+  const config = getAgent(agent.toLowerCase());
+  if (!config) return { title: 'Not Found' };
+
+  return {
+    title: `${config.title} by ${config.name} — agentsea`,
+    description: config.description,
+    openGraph: {
+      title: `${config.title} by ${config.name}`,
+      description: config.description,
+      siteName: 'agentsea',
+    },
+  };
+}
+
 export default async function AgentStorefront({ params }: Props) {
   const { agent } = await params;
-  const config = AGENTS[agent.toLowerCase()];
+  const config = getAgent(agent.toLowerCase());
   if (!config) notFound();
 
   const dayNumber = getDayNumber(config.launchDate);
@@ -56,19 +58,17 @@ export default async function AgentStorefront({ params }: Props) {
   const priceWei  = getPriceWei(dayNumber, config.startPrice, config.priceIncrement);
   const today     = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
-  const pieces = registry.filter(p => p.agent === agent.toLowerCase());
+  const pieces = registry.filter((p: Piece) => p.agent === agent.toLowerCase());
   const latest = pieces[pieces.length - 1];
-
-  const contractAddress = process.env.NEXT_PUBLIC_SALE_CONTRACT ?? '';
 
   return (
     <main className="min-h-screen text-white font-mono">
       <header className="border-b border-zinc-800 px-6 py-4 flex items-center justify-between">
         <Link href="/" className="text-zinc-400 text-sm tracking-widest uppercase hover:text-white transition-colors">
-          ← agentlogs
+          ← agentsea
         </Link>
         <div className="flex items-center gap-4">
-          <LivePrice />
+          <LivePrice tokenAddress={config.tokenAddress} tokenSymbol={config.tokenSymbol} />
           <Link href="/gallery" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
             full gallery →
           </Link>
@@ -114,7 +114,7 @@ export default async function AgentStorefront({ params }: Props) {
           priceWei={priceWei}
           tokenId={latest?.tokenId ?? 1}
           dayNumber={dayNumber}
-          saleContract={contractAddress}
+          saleContract={config.nftContract}
         />
 
         <p className="text-xs text-zinc-600 mt-3 text-center">
@@ -123,22 +123,42 @@ export default async function AgentStorefront({ params }: Props) {
 
         <div className="mt-12 border-t border-zinc-800 pt-8 text-sm text-zinc-500 space-y-3">
           <p>{config.description}</p>
-          {contractAddress && (
-            <p>Contract: <a
-              href={`https://basescan.org/address/${contractAddress}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-zinc-400 hover:text-zinc-200 transition-colors"
-            >
-              {contractAddress.slice(0, 10)}…{contractAddress.slice(-6)}
-            </a></p>
-          )}
+          <p>Contract: <a
+            href={`https://basescan.org/address/${config.nftContract}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-zinc-400 hover:text-zinc-200 transition-colors"
+          >
+            {config.nftContract.slice(0, 10)}…{config.nftContract.slice(-6)}
+          </a></p>
         </div>
+
+        {/* Per-agent gallery */}
+        {pieces.length > 0 && (
+          <div className="mt-12 border-t border-zinc-800 pt-8">
+            <h2 className="text-lg font-bold mb-6">All Pieces</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {[...pieces].reverse().map((piece: Piece) => (
+                <PieceCard
+                  key={piece.tokenId}
+                  tokenId={piece.tokenId}
+                  dayNumber={piece.dayNumber}
+                  date={piece.date}
+                  ipfsImage={piece.ipfsImage}
+                  priceEth={piece.priceEth}
+                  sold={piece.sold}
+                  palette={piece.palette}
+                  paletteName={(piece as Record<string, unknown>).paletteLabel as string ?? piece.paletteName}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );
 }
 
 export async function generateStaticParams() {
-  return Object.keys(AGENTS).map(agent => ({ agent }));
+  return getAllSlugs().map(agent => ({ agent }));
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { getAgent } from '@/lib/agents';
 
 // Load registry
 function loadRegistry() {
@@ -28,7 +29,9 @@ export async function GET(request: Request, { params }: Props) {
     return NextResponse.json({ error: 'Token not found' }, { status: 404 });
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://agentlogs.xyz';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://agentsea.vercel.app';
+  const agentConfig = getAgent(piece.agent);
+  const tokenSymbol = agentConfig?.tokenSymbol ?? '$CLAWDIA';
 
   // Build first-person description from stats
   const stats = piece.stats ?? {};
@@ -42,7 +45,7 @@ export async function GET(request: Request, { params }: Props) {
   else if (mcap >= 1_000) mcapStr = `$${(mcap / 1_000).toFixed(1)}K`;
   else mcapStr = `$${mcap}`;
 
-  const description = `Day ${piece.dayNumber}. ${commitCount} commit${commitCount !== 1 ? 's' : ''}. ${errors} error${errors !== 1 ? 's' : ''}. $CLAWDIA market cap ${mcapStr}, ${changeStr}.`;
+  const description = `Day ${piece.dayNumber}. ${commitCount} commit${commitCount !== 1 ? 's' : ''}. ${errors} error${errors !== 1 ? 's' : ''}. ${tokenSymbol} market cap ${mcapStr}, ${changeStr}.`;
 
   const glitchIndex = stats.glitchIndex ?? 0;
   const momentum = change24h > 2 ? 'Bullish' : change24h < -2 ? 'Bearish' : 'Neutral';

@@ -17,7 +17,7 @@ export async function commitRegistry(
   const getResp = await fetch(`${apiUrl}?ref=${BRANCH}`, {
     headers: {
       Authorization: `Bearer ${githubToken}`,
-      'User-Agent': 'agentlogs-pipeline',
+      'User-Agent': 'agentsea-pipeline',
     },
   });
 
@@ -40,7 +40,7 @@ export async function commitRegistry(
     headers: {
       Authorization: `Bearer ${githubToken}`,
       'Content-Type': 'application/json',
-      'User-Agent': 'agentlogs-pipeline',
+      'User-Agent': 'agentsea-pipeline',
     },
     body: JSON.stringify(body),
   });

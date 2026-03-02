@@ -30,6 +30,7 @@ export interface DayLog {
   date: string;
   agent: string;
   seed: number;
+  tokenSymbol?: string;
 
   // DexScreener
   priceUsd: number;

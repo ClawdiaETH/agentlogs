@@ -17,7 +17,8 @@ export const metadataLine: LayerFn = (ctx, _rng, dayLog, colors) => {
     mcapStr = `$${dayLog.marketCap.toFixed(0)}`;
   }
 
-  const text = `$CLAWDIA / BASE / MCAP ${mcapStr} / ${dayLog.paletteId}`;
+  const symbol = dayLog.tokenSymbol ?? '$CLAWDIA';
+  const text = `${symbol} / BASE / MCAP ${mcapStr} / ${dayLog.paletteId}`;
 
   ctx.globalAlpha = 0.5;
   ctx.fillStyle = colors.WHT;
