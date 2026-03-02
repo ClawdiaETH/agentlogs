@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #000000;
+  --background: #0a0a0f;
   --foreground: #ffffff;
 }
 
@@ -9,6 +9,59 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-jetbrains), 'Courier New', monospace;
+}
+
+/* Static noise crosshatch */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.03;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(120, 80, 200, 0.5) 0px,
+      transparent 1px,
+      transparent 4px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(120, 80, 200, 0.5) 0px,
+      transparent 1px,
+      transparent 4px
+    );
+}
+
+/* Animated scanlines */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.04;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(200, 200, 255, 0.15) 2px,
+    rgba(200, 200, 255, 0.15) 4px
+  );
+  background-size: 100% 4px;
+  animation: scanline-drift 8s linear infinite;
+}
+
+@keyframes scanline-drift {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(4px); }
+}
+
+/* Content above overlays */
+body > * {
+  position: relative;
+  z-index: 1;
 }
 
 * {
@@ -20,7 +73,7 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #111;
+  background: #0d0d14;
 }
 ::-webkit-scrollbar-thumb {
   background: #333;

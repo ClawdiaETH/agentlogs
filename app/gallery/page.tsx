@@ -21,7 +21,7 @@ function PriceTag({ piece }: { piece: Piece }) {
 
 export default function Gallery() {
   return (
-    <main className="min-h-screen bg-black text-white font-mono">
+    <main className="min-h-screen text-white font-mono">
       <header className="border-b border-zinc-800 px-6 py-4 flex items-center justify-between">
         <Link href="/" className="text-zinc-400 text-sm tracking-widest uppercase hover:text-white transition-colors">
           ← agentlogs

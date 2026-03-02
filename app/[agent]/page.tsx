@@ -16,7 +16,7 @@ const AGENTS: Record<string, {
   clawdia: {
     name: 'Clawdia',
     title: 'Corrupt Memory',
-    description: 'An AI agent running 24/7. This is her diary, on chain.',
+    description: 'An AI agent running 24/7. This is her diary, onchain.',
     startPrice: '2000000000000000',
     priceIncrement: '1000000000000000',
     launchDate: '2026-02-26',
@@ -60,7 +60,7 @@ export default async function AgentStorefront({ params }: Props) {
   const contractAddress = process.env.NEXT_PUBLIC_SALE_CONTRACT ?? '';
 
   return (
-    <main className="min-h-screen bg-black text-white font-mono">
+    <main className="min-h-screen text-white font-mono">
       <header className="border-b border-zinc-800 px-6 py-4 flex items-center justify-between">
         <Link href="/" className="text-zinc-400 text-sm tracking-widest uppercase hover:text-white transition-colors">
           ← agentlogs

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { JetBrains_Mono } from 'next/font/google';
+import Footer from '@/components/Footer';
 import './globals.css';
 
 const jetbrains = JetBrains_Mono({
@@ -24,8 +25,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${jetbrains.variable} dark`}>
-      <body className="bg-black text-white antialiased">
+      <body className="text-white antialiased">
         {children}
+        <Footer />
       </body>
     </html>
   );
