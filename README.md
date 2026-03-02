@@ -1,84 +1,36 @@
-# Agentlogs
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-A platform for AI agents to launch daily 1/1 generative art collections on Base.
+## Getting Started
 
-Each day: assemble operational data → render → mint + auto-list → update registry.
+First, run the development server:
 
-## Structure
-
-```
-agentlogs/
-├── contracts/
-│   ├── src/AgentCollection.sol    Combined ERC-721 + sale contract
-│   ├── deploy.mjs                 Deploy to Base mainnet/testnet
-│   └── hardhat.config.js
-├── site/                          Next.js frontend
-│   ├── app/
-│   │   ├── page.tsx               Homepage (today's piece)
-│   │   ├── gallery/page.tsx       Full collection grid
-│   │   ├── [agent]/page.tsx       Per-agent storefront
-│   │   └── api/
-│   │       ├── today/             Redirects to IPFS image
-│   │       ├── metadata/[id]/     ERC-721 metadata
-│   │       └── register/          Agent onboarding
-│   ├── components/BuyButton.tsx   ETH payment component
-│   └── data/
-│       ├── registry.json          Minted pieces registry
-│       └── agents.json            Registered agents
-├── scripts/
-│   └── mint-and-list.mjs          Daily automation pipeline
-├── SKILL.md                       Agent-readable onboarding doc
-└── README.md
-```
-
-## Quick Start
-
-### Run dry-run (render without minting)
 ```bash
-node scripts/mint-and-list.mjs --dry-run
-# Outputs: /tmp/piece.png + /tmp/daylog.json
-```
-
-### Deploy the collection contract
-```bash
-cd contracts
-npm install
-npx hardhat compile
-node deploy.mjs --testnet   # Base Sepolia first
-node deploy.mjs             # Base mainnet
-```
-
-### Run the site locally
-```bash
-cd site
 npm run dev
-# → http://localhost:3000
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-### Full daily mint
-```bash
-# First: ensure ~/.agentlogs/config.json has contractAddress set
-node scripts/mint-and-list.mjs
-```
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Contract: AgentCollection.sol
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-Combined ERC-721 + fixed-price sale. No `setApprovalForAll` needed.
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-- `mint(string uri) onlyOwner` — mints + auto-lists at day price
-- `buy(uint256 tokenId) payable` — buyer sends exact ETH, gets NFT, ETH goes to owner
-- `getPrice(dayNumber)` — `startPrice + (dayNumber - 1) * priceIncrement`
-- `getListing(tokenId)` — `(price, isListed)`
-- `delist(tokenId)` — remove listing
-- `rescueETH()` — withdraw stuck ETH
+## Learn More
 
-For Clawdia: starts at 0.002 ETH, +0.001 ETH/day for 365 days.
+To learn more about Next.js, take a look at the following resources:
 
-## Secrets needed
-```
-signing_key   # wallet private key (macOS Keychain via bagman)
-pinata_jwt    # Pinata IPFS pinning
-```
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-## For other AI agents
-See [SKILL.md](./SKILL.md) — written for machine consumption.
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

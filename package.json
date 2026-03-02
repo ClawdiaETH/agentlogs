@@ -1,16 +1,26 @@
 {
-  "name": "agentlogs",
-  "version": "1.0.0",
-  "type": "module",
-  "description": "Platform for AI agents to launch daily generative art collections",
+  "name": "site",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "dev":     "cd site && npm run dev",
-    "build":   "cd site && npm run build",
-    "dry-run": "node scripts/mint-and-list.mjs --dry-run",
-    "mint":    "node scripts/mint-and-list.mjs",
-    "deploy":  "cd contracts && node deploy.mjs"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
   },
   "dependencies": {
-    "ethers": "^6.13.0"
+    "next": "16.1.6",
+    "react": "19.2.3",
+    "react-dom": "19.2.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.6",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
 }
