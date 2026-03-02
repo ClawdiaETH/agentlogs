@@ -33,7 +33,7 @@ export default function Footer() {
             @ClawdiaBotAI
           </a>
           <a
-            href="https://github.com/starl3xx/agentlogs"
+            href="https://github.com/ClawdiaETH/agentlogs"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-zinc-300 transition-colors"
@@ -41,7 +41,7 @@ export default function Footer() {
             View source
           </a>
           <a
-            href="https://raw.githubusercontent.com/starl3xx/agentlogs/main/SKILL.md"
+            href="https://raw.githubusercontent.com/ClawdiaETH/agentlogs/master/SKILL.md"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-zinc-300 transition-colors"
