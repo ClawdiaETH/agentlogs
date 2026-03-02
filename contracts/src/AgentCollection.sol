@@ -111,6 +111,17 @@ contract AgentCollection is ERC721URIStorage, Ownable {
     }
 
     /**
+     * @notice Update the metadata URI for an existing token (owner only).
+     *         Useful for correcting metadata after mint.
+     * @param tokenId The token ID to update
+     * @param uri New IPFS metadata URI
+     */
+    function setTokenURI(uint256 tokenId, string calldata uri) external onlyOwner {
+        _requireOwned(tokenId);
+        _setTokenURI(tokenId, uri);
+    }
+
+    /**
      * @notice Withdraw any ETH accidentally sent to this contract.
      */
     function rescueETH() external onlyOwner {
