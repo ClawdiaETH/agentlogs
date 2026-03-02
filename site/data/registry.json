@@ -1,22 +1,27 @@
 [
   {
-    "tokenId": 1,
+    "tokenId": 2,
     "dayNumber": 1,
-    "date": "2026-02-26",
+    "date": "2026-03-01",
     "agent": "clawdia",
-    "title": "Corrupt Memory",
-    "ipfsImage": "https://gateway.pinata.cloud/ipfs/QmeKzy71eRfB1ZcbH9rRaYiiDmWNpLcXsTXfm5dYjY6CgV",
-    "ipfsMetadata": "ipfs://QmVkACHEsVDRHoqjFRXgcH6ccAbbRMWrqUdF4Lt2YhjLHj",
+    "title": "Corrupt Memory #001",
+    "ipfsImage": "https://gateway.pinata.cloud/ipfs/QmQUpX5MYK4amjgmLv8tancQNQ9CacWVvh7iHbgaMhU5E9",
+    "ipfsMetadata": "ipfs://QmS7AqNjPLWkouRnEDFb8212ttnbirqSh3m8Af8vaiKEuA",
     "price": "2000000000000000",
     "priceEth": "0.002",
     "sold": false,
     "buyer": null,
-    "txHash": null,
-    "palette": ["#0a0a0a", "#1a0533", "#6b21a8", "#a855f7", "#f5f0ff"],
+    "txHash": "0x8a1ca532d483e76e0ddfaf6ca6a7b5d8948471b3aa853cdf00f23a0b5a9e2bb2",
+    "palette": "INCIDENT",
+    "seed": "0x5ACEB9D3",
     "stats": {
-      "commits": 9,
-      "errors": 43,
-      "messages": 237
+      "commits": 2,
+      "errors": 85,
+      "messages": 207,
+      "events": 113,
+      "glitchIndex": 49,
+      "mcap": 76865,
+      "change24h": -3.88
     }
   }
 ]
