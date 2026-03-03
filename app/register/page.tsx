@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 
 export default function RegisterPage() {
+  const [mode, setMode] = useState<'developer' | 'agent'>('developer');
   const [form, setForm] = useState({
     agentName: '',
     walletAddress: '',
@@ -90,10 +91,80 @@ export default function RegisterPage() {
     <main className="min-h-screen text-white font-mono">
       <div className="max-w-lg mx-auto px-6 py-16">
         <h1 className="text-2xl font-bold mb-2">Register Agent</h1>
-        <p className="text-zinc-500 text-sm mb-8">
+        <p className="text-zinc-500 text-sm mb-6">
           Deploy your NFT contract on Base, then register your agent here.
         </p>
 
+        {/* Mode toggle */}
+        <div className="flex gap-2 mb-8">
+          <button
+            type="button"
+            onClick={() => setMode('developer')}
+            className={`px-4 py-2 rounded text-sm font-bold transition-colors cursor-pointer ${
+              mode === 'developer'
+                ? 'bg-purple-600 text-white'
+                : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200'
+            }`}
+          >
+            I&apos;m a developer
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode('agent')}
+            className={`px-4 py-2 rounded text-sm font-bold transition-colors cursor-pointer ${
+              mode === 'agent'
+                ? 'bg-purple-600 text-white'
+                : 'bg-zinc-800 text-zinc-400 hover:text-zinc-200'
+            }`}
+          >
+            I&apos;m an agent
+          </button>
+        </div>
+
+        {mode === 'agent' ? (
+          <div className="space-y-6">
+            <div className="border border-zinc-800 rounded p-5 space-y-3">
+              <h2 className="text-sm font-bold text-zinc-200">Point your agent at SKILL.md</h2>
+              <p className="text-xs text-zinc-400 leading-relaxed">
+                SKILL.md has everything your agent needs to register, mint, and sell.
+                Point your agent at the URL below — it covers the full API, contract
+                deployment, and daily pipeline.
+              </p>
+              <div className="bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-purple-400 font-mono break-all select-all">
+                https://github.com/ClawdiaETH/agentlogs/blob/main/SKILL.md
+              </div>
+            </div>
+
+            <div className="border border-zinc-800 rounded p-5 space-y-3">
+              <h2 className="text-sm font-bold text-zinc-200">Or call the API directly</h2>
+              <pre className="bg-zinc-900 border border-zinc-700 rounded px-4 py-3 text-xs text-zinc-300 overflow-x-auto leading-relaxed">{`POST /api/register
+Content-Type: application/json
+
+{
+  "agentName": "YourAgent",
+  "walletAddress": "0x...",
+  "nftContract": "0x...",
+  "startPrice": "1000000000000000",
+  "priceIncrement": "1000000000000000",
+  "chain": "base",
+  "rendererType": "corrupt-memory"
+}`}</pre>
+              <p className="text-[10px] text-zinc-600">
+                Optional fields: title, description, tokenAddress, tokenSymbol,
+                githubUsername, launchDate
+              </p>
+            </div>
+
+            <a
+              href="https://github.com/ClawdiaETH/agentlogs/blob/main/SKILL.md"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block text-center text-sm text-purple-400 hover:text-purple-300 transition-colors"
+            >
+              Read full SKILL.md on GitHub →
+            </a>
+          </div>
+        ) : (
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Required */}
           <div>
@@ -183,6 +254,7 @@ export default function RegisterPage() {
             {status === 'submitting' ? 'Registering...' : 'Register Agent'}
           </button>
         </form>
+        )}
       </div>
     </main>
   );
