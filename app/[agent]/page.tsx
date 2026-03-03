@@ -53,13 +53,16 @@ export default async function AgentStorefront({ params }: Props) {
   const config = getAgent(agent.toLowerCase());
   if (!config) notFound();
 
-  const dayNumber = getDayNumber(config.launchDate);
-  const priceEth  = getPriceEth(dayNumber, config.startPrice, config.priceIncrement);
-  const priceWei  = getPriceWei(dayNumber, config.startPrice, config.priceIncrement);
-  const today     = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-
   const pieces = registry.filter((p: Piece) => p.agent === agent.toLowerCase());
   const latest = pieces[pieces.length - 1];
+
+  // Use actual registry data when a piece exists, fall back to computed values for preview
+  const dayNumber = latest?.dayNumber ?? getDayNumber(config.launchDate);
+  const priceEth  = latest?.priceEth ?? getPriceEth(dayNumber, config.startPrice, config.priceIncrement);
+  const priceWei  = latest?.price ?? getPriceWei(dayNumber, config.startPrice, config.priceIncrement);
+  const pieceDate = latest
+    ? new Date(latest.date + 'T12:00:00Z').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+    : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
   return (
     <main className="min-h-screen text-white font-mono">
@@ -91,7 +94,7 @@ export default async function AgentStorefront({ params }: Props) {
         {/* Title */}
         <div className="mb-6">
           <p className="text-xs text-zinc-500 tracking-widest uppercase mb-1">
-            Day {dayNumber} · {today}
+            Day {dayNumber} · {pieceDate}
           </p>
           <h1 className="text-3xl font-bold tracking-tight">{config.title}</h1>
           <p className="text-zinc-400 text-sm mt-1">by {config.name} · 1/1</p>
@@ -108,14 +111,25 @@ export default async function AgentStorefront({ params }: Props) {
           </div>
         )}
 
-        {/* Buy button */}
-        <BuyButton
-          priceEth={priceEth}
-          priceWei={priceWei}
-          tokenId={latest?.tokenId ?? 1}
-          dayNumber={dayNumber}
-          saleContract={config.nftContract}
-        />
+        {/* Buy button / sold state */}
+        {latest?.sold ? (
+          <div className="w-full rounded border border-zinc-700 bg-zinc-900 text-zinc-400 px-6 py-4 text-center text-sm font-mono">
+            CLAIMED
+            {latest.buyer && (
+              <span className="block text-xs text-zinc-600 mt-1 truncate">
+                {latest.buyer}
+              </span>
+            )}
+          </div>
+        ) : (
+          <BuyButton
+            priceEth={priceEth}
+            priceWei={priceWei}
+            tokenId={latest?.tokenId ?? 1}
+            dayNumber={dayNumber}
+            saleContract={config.nftContract}
+          />
+        )}
 
         <p className="text-xs text-zinc-600 mt-3 text-center">
           Price increases {Number(config.priceIncrement) / 1e18} ETH each day for 365 days
