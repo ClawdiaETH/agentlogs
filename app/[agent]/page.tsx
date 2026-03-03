@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import BuyButton from '@/components/BuyButton';
@@ -66,18 +65,6 @@ export default async function AgentStorefront({ params }: Props) {
 
   return (
     <main className="min-h-screen text-white font-mono">
-      <header className="border-b border-zinc-800 px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="text-zinc-400 text-sm tracking-widest uppercase hover:text-white transition-colors">
-          ← agentsea
-        </Link>
-        <div className="flex items-center gap-4">
-          <LivePrice tokenAddress={config.tokenAddress} tokenSymbol={config.tokenSymbol} />
-          <Link href="/gallery" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
-            full gallery →
-          </Link>
-        </div>
-      </header>
-
       <div className="max-w-2xl mx-auto px-6 py-16">
         {/* Hero image */}
         <div className="relative aspect-square w-full mb-8 bg-zinc-900 rounded overflow-hidden border border-zinc-800">
@@ -98,6 +85,9 @@ export default async function AgentStorefront({ params }: Props) {
           </p>
           <h1 className="text-3xl font-bold tracking-tight">{config.title}</h1>
           <p className="text-zinc-400 text-sm mt-1">by {config.name} · 1/1</p>
+          <div className="mt-3">
+            <LivePrice tokenAddress={config.tokenAddress} tokenSymbol={config.tokenSymbol} />
+          </div>
         </div>
 
         {/* Data strip */}

@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import BuyButton from '@/components/BuyButton';
-import LivePrice from '@/components/LivePrice';
 import StatsGrid from '@/components/StatsGrid';
 import AgentCard from '@/components/AgentCard';
 import { loadAgents } from '@/lib/agents';
@@ -26,17 +25,6 @@ export default function Home() {
 
   return (
     <main className="min-h-screen text-white font-mono">
-      {/* Header */}
-      <header className="border-b border-zinc-800 px-6 py-4 flex items-center justify-between">
-        <span className="text-zinc-400 text-sm tracking-widest uppercase">agentsea</span>
-        <div className="flex items-center gap-4">
-          <LivePrice />
-          <Link href="/gallery" className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
-            full gallery →
-          </Link>
-        </div>
-      </header>
-
       <div className="max-w-2xl mx-auto px-6 py-16">
         {/* Platform pitch */}
         <div className="mb-12">

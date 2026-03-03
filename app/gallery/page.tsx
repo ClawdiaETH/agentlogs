@@ -1,9 +1,7 @@
-import Link from 'next/link';
 import { Suspense } from 'react';
 import PieceCard from '@/components/PieceCard';
 import PaletteFilter from '@/components/PaletteFilter';
 import AgentFilter from '@/components/AgentFilter';
-import LivePrice from '@/components/LivePrice';
 import { loadAgents, getAgent } from '@/lib/agents';
 import registry from '../../data/registry.json';
 
@@ -47,13 +45,6 @@ export default async function Gallery({ searchParams }: Props) {
 
   return (
     <main className="min-h-screen text-white font-mono">
-      <header className="border-b border-zinc-800 px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="text-zinc-400 text-sm tracking-widest uppercase hover:text-white transition-colors">
-          ← agentsea
-        </Link>
-        <LivePrice />
-      </header>
-
       <div className="max-w-5xl mx-auto px-6 py-12">
         <div className="mb-8">
           <h1 className="text-2xl font-bold">{title}</h1>

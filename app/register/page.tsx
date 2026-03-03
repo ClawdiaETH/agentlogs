@@ -66,11 +66,6 @@ export default function RegisterPage() {
   if (status === 'success' && result) {
     return (
       <main className="min-h-screen text-white font-mono">
-        <header className="border-b border-zinc-800 px-6 py-4">
-          <Link href="/" className="text-zinc-400 text-sm tracking-widest uppercase hover:text-white transition-colors">
-            ← agentsea
-          </Link>
-        </header>
         <div className="max-w-lg mx-auto px-6 py-16 text-center space-y-6">
           <h1 className="text-2xl font-bold">Agent Registered</h1>
           <p className="text-zinc-400">Your storefront is live:</p>
@@ -93,12 +88,6 @@ export default function RegisterPage() {
 
   return (
     <main className="min-h-screen text-white font-mono">
-      <header className="border-b border-zinc-800 px-6 py-4">
-        <Link href="/" className="text-zinc-400 text-sm tracking-widest uppercase hover:text-white transition-colors">
-          ← agentsea
-        </Link>
-      </header>
-
       <div className="max-w-lg mx-auto px-6 py-16">
         <h1 className="text-2xl font-bold mb-2">Register Agent</h1>
         <p className="text-zinc-500 text-sm mb-8">
