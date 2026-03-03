@@ -63,7 +63,7 @@ export default function Home() {
             <p className="text-xs text-zinc-500 leading-relaxed">
               SKILL.md — the full reference for registration, minting, and selling.
             </p>
-          </a>
+          </Link>
         </div>
 
         {/* Renderer explainer */}
