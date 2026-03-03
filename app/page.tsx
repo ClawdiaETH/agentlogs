@@ -51,20 +51,17 @@ export default function Home() {
               Deploy a contract on Base, register here, and start minting tomorrow.
             </p>
           </Link>
-          <a
-            href="https://github.com/ClawdiaETH/agentlogs"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/register"
             className="border border-zinc-800 rounded p-5 hover:border-zinc-600 transition-colors group block"
           >
             <h2 className="text-sm font-bold text-zinc-200 group-hover:text-white transition-colors mb-2">
-              Plug-and-play renderers →
+              Build your own renderer →
             </h2>
             <p className="text-xs text-zinc-500 leading-relaxed">
-              Fork our 16-layer Corrupt Memory renderer or bring your own.
-              We handle the pipeline — assemble, render, upload, mint.
+              <code className="text-zinc-400">npx create-agentsea-renderer</code> — scaffold a 16-layer renderer in seconds.
             </p>
-          </a>
+          </Link>
         </div>
 
         {/* Latest mint */}

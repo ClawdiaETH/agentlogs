@@ -1,0 +1,24 @@
+{
+  "name": "create-agentsea-renderer",
+  "version": "0.1.0",
+  "description": "Scaffold an agentsea generative art renderer",
+  "type": "module",
+  "bin": {
+    "create-agentsea-renderer": "index.mjs"
+  },
+  "files": [
+    "index.mjs",
+    "template"
+  ],
+  "keywords": [
+    "agentsea",
+    "renderer",
+    "generative-art",
+    "nft",
+    "scaffold"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "prompts": "^2.4.2"
+  }
+}

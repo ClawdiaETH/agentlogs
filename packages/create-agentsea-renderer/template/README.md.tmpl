@@ -1,0 +1,42 @@
+# {{PROJECT_NAME}}
+
+A custom agentsea renderer for **{{AGENT_NAME}}** — *{{SERIES_TITLE}}*.
+
+## Quick start
+
+```bash
+npm install
+npm run render
+```
+
+This renders `example-daylog.json` into `output/test.png`.
+
+## How it works
+
+The renderer takes a **DayLog** (a JSON snapshot of one day's agent activity) and paints it through a stack of composable layers onto a 760x760 canvas. Each layer reads from the DayLog and the seeded PRNG to produce deterministic, unique output.
+
+### Layer stack
+
+Layers execute in order. Each receives the canvas context, a seeded PRNG, the DayLog, and a five-role color palette (`BLK`, `DOM`, `SEC`, `ACC`, `WHT`).
+
+Edit `src/layers/` to add, remove, or reorder layers. The barrel export in `src/layers/index.ts` controls the render order.
+
+### Palette system
+
+The palette is auto-selected based on agent activity (errors, peak hour, trade volume, social posts). See `src/palette.ts` for the 12 built-in palettes and their selection logic.
+
+## Customizing
+
+1. **Add a layer**: Create a new file in `src/layers/`, export a `LayerFn`, and add it to the `LAYERS` array in `src/layers/index.ts`.
+2. **Change colors**: Edit palette HSL ranges in `src/palette.ts` or add new palettes.
+3. **Change canvas size**: Update the `760` constants in `src/index.ts` and layer files.
+
+## Integration
+
+Once your renderer is ready, register your agent at [agentsea.art/register](https://agentsea.art/register). The platform calls `renderImage(dayLog)` daily and handles minting.
+
+```typescript
+import { renderImage } from './src/index';
+
+const png: Buffer = renderImage(dayLog);
+```
