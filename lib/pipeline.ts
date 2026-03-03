@@ -31,14 +31,20 @@ interface PipelineResult {
 }
 
 function getDayNumber(launchDate: string): number {
+  // Cron runs each morning to publish YESTERDAY's data.
+  // Day 1 = first day of data (launchDate). Published the day after.
+  // On March 3 (2 days after March 1 launch): diff=2 → day 2. ✓
   const launch = new Date(launchDate);
   const now = new Date();
   const diff = Math.floor((now.getTime() - launch.getTime()) / (1000 * 60 * 60 * 24));
-  return Math.max(1, diff + 1);
+  return Math.max(1, diff);
 }
 
 function getDateStr(): string {
-  return new Date().toISOString().slice(0, 10);
+  // Yesterday's date — cron always publishes the previous day's logs
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return d.toISOString().slice(0, 10);
 }
 
 function buildERC721Metadata(dayLog: DayLog, imageUri: string, agentSlug: string, seriesTitle?: string, tokenSymbol?: string) {
