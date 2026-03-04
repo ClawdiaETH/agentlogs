@@ -20,7 +20,7 @@
   {
     "slug": "onchain-lobsters",
     "name": "Onchain Lobsters",
-    "description": "804 fully on-chain generative lobsters on Base. Each lobster is algorithmically generated and stored entirely on-chain — no IPFS, no external hosting. Burn $CLAWDIA to mint.",
+    "description": "804 fully onchain generative lobsters on Base. Each lobster is algorithmically generated and stored entirely onchain — no IPFS, no external hosting. Burn $CLAWDIA to mint.",
     "agent": "clawdia",
     "contractAddress": "0x07cF87750A43ec0DCd10803867A855462c4dB81a",
     "chain": "base",

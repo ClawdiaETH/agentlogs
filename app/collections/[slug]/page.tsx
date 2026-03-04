@@ -87,7 +87,7 @@ export default async function CollectionPage({ params }: Props) {
           {collection.onchain && (
             <div>
               <p className="text-xs text-zinc-500 mb-1">Storage</p>
-              <p className="text-sm text-emerald-400">Fully on-chain</p>
+              <p className="text-sm text-emerald-400">Fully onchain</p>
             </div>
           )}
         </div>
