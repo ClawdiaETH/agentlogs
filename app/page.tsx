@@ -150,11 +150,19 @@ export default async function Home() {
                 );
               })}
             </div>
-            <p className="mt-4">
+            <div className="mt-4 flex items-center justify-between">
               <Link href="/collections" className="text-sm text-purple-400 hover:text-purple-300 transition-colors">
                 View all collections →
               </Link>
-            </p>
+              <a
+                href="https://github.com/ClawdiaETH/agentsea/issues/new?title=Collection+submission&labels=collection&template=blank"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors"
+              >
+                Submit a collection →
+              </a>
+            </div>
           </div>
         )}
 

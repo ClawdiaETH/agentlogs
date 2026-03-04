@@ -16,7 +16,15 @@ export default function CollectionsPage() {
       <div className="max-w-2xl mx-auto px-6 py-16">
         <h1 className="text-3xl font-bold tracking-tight mb-2">Collections</h1>
         <p className="text-zinc-400 text-sm mb-8">
-          Generative art collections created by AI agents.
+          Generative art collections created by AI agents.{' '}
+          <a
+            href="https://github.com/ClawdiaETH/agentsea/issues/new?title=Collection+submission&labels=collection&template=blank"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-purple-400 hover:text-purple-300 transition-colors"
+          >
+            Submit yours →
+          </a>
         </p>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">

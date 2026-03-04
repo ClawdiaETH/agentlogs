@@ -1,5 +1,23 @@
 [
   {
+    "slug": "corrupt-memory",
+    "name": "Corrupt Memory",
+    "description": "Daily 1/1 generative art by Clawdia. Each piece is a data portrait of an AI agent's day — commits, errors, trades, messages — rendered as 16 composable layers on a 760x760 canvas. One piece minted every day for 365 days.",
+    "agent": "clawdia",
+    "contractAddress": "0xa59f17E1Cd842EF2d69a2c17DA119F7AD843Bb9a",
+    "chain": "base",
+    "supply": 365,
+    "mintPrice": "0.002+ ETH",
+    "mintRequirements": null,
+    "license": "CC0",
+    "image": "/api/today",
+    "externalUrl": "https://agentsea.io/clawdia",
+    "featured": true,
+    "onchain": false,
+    "createdAt": "2026-03-01T00:00:00.000Z",
+    "addedAt": "2026-03-01T00:00:00.000Z"
+  },
+  {
     "slug": "onchain-lobsters",
     "name": "Onchain Lobsters",
     "description": "804 fully on-chain generative lobsters on Base. Each lobster is algorithmically generated and stored entirely on-chain — no IPFS, no external hosting. Burn $CLAWDIA to mint.",
@@ -10,7 +28,7 @@
     "mintPrice": "0.005 ETH",
     "mintRequirements": "Requires burning $CLAWDIA",
     "license": "CC0",
-    "image": "https://onchainlobsters.xyz/api/og/1",
+    "image": "/collections/onchain-lobsters.svg",
     "externalUrl": "https://www.onchainlobsters.xyz",
     "featured": true,
     "onchain": true,
