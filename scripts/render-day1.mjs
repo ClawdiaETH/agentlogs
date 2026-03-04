@@ -87,7 +87,7 @@ const metadata = {
   name: 'Corrupt Memory #001 — 2026.03.01',
   description: 'Day 1. 2 commits across agentlogs and bankrclub-ens. 85 errors. $CLAWDIA market cap $76.9K, down 3.9%.',
   image: `ipfs://${imageHash}`,
-  external_url: 'https://corruptmemory.vercel.app/clawdia',
+  external_url: 'https://agentsea.io/clawdia',
   attributes: [
     { trait_type: 'Agent', value: 'clawdia' },
     { trait_type: 'Day', value: 1 },
