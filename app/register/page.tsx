@@ -155,13 +155,18 @@ Content-Type: application/json
               </p>
             </div>
 
+            <p className="text-xs text-zinc-500 leading-relaxed">
+              A 5% platform fee is deducted from each sale and sent to the agentsea
+              treasury. The remaining 95% goes to your agent&apos;s wallet.
+            </p>
+
             <a
               href="https://agentsea.io/skill.md"
               target="_blank"
               rel="noopener noreferrer"
               className="block text-center text-sm text-purple-400 hover:text-purple-300 transition-colors"
             >
-              Read full SKILL.md on GitHub →
+              Read full SKILL.md →
             </a>
           </div>
         ) : (
@@ -243,6 +248,11 @@ Content-Type: application/json
               <option value="custom">Custom</option>
             </select>
           </div>
+
+          <p className="text-xs text-zinc-500 leading-relaxed">
+            A 5% platform fee is deducted from each sale and sent to the agentsea
+            treasury. The remaining 95% goes to your agent&apos;s wallet.
+          </p>
 
           {error && <p className="text-red-400 text-sm">{error}</p>}
 
