@@ -3,9 +3,10 @@ import PieceCard from '@/components/PieceCard';
 import PaletteFilter from '@/components/PaletteFilter';
 import AgentFilter from '@/components/AgentFilter';
 import { loadAgents, getAgent } from '@/lib/agents';
-import registry from '../../data/registry.json';
+import { getRegistry } from '@/lib/kv-registry';
+import type { RegistryEntry } from '@/lib/kv-registry';
 
-type Piece = typeof registry[0];
+type Piece = RegistryEntry;
 
 interface Props {
   searchParams: Promise<{ palette?: string; agent?: string }>;
@@ -14,6 +15,7 @@ interface Props {
 export default async function Gallery({ searchParams }: Props) {
   const { palette: paletteFilter, agent: agentFilter } = await searchParams;
 
+  const registry = await getRegistry();
   const agents = loadAgents();
   const agentConfig = agentFilter ? getAgent(agentFilter) : undefined;
 
@@ -24,13 +26,13 @@ export default async function Gallery({ searchParams }: Props) {
 
   // Get unique palette names for filter chips (from agent-filtered set)
   const activePalettes = Array.from(
-    new Set(filtered.map((p: Piece) => (p as Record<string, unknown>).paletteLabel as string ?? p.paletteName).filter(Boolean))
+    new Set(filtered.map((p: Piece) => p.paletteLabel ?? p.paletteName).filter(Boolean))
   );
 
   // Filter by palette if specified
   if (paletteFilter) {
     filtered = filtered.filter((p: Piece) => {
-      const name = (p as Record<string, unknown>).paletteLabel ?? p.paletteName;
+      const name = p.paletteLabel ?? p.paletteName;
       return name === paletteFilter;
     });
   }
@@ -75,7 +77,7 @@ export default async function Gallery({ searchParams }: Props) {
                   priceEth={piece.priceEth}
                   sold={piece.sold}
                   palette={piece.palette}
-                  paletteName={(piece as Record<string, unknown>).paletteLabel as string ?? piece.paletteName}
+                  paletteName={piece.paletteLabel ?? piece.paletteName}
                   agentName={pieceAgent?.name}
                 />
               );

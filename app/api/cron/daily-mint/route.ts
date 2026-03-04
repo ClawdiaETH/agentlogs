@@ -15,9 +15,9 @@ export async function GET(request: Request) {
 
   const privateKey = process.env.PRIVATE_KEY;
   const pinataJwt = process.env.PINATA_JWT;
-  const githubToken = process.env.GITHUB_TOKEN;
+  const githubToken = process.env.GITHUB_TOKEN; // optional — kept for backward compat
 
-  if (!privateKey || !pinataJwt || !githubToken) {
+  if (!privateKey || !pinataJwt) {
     return NextResponse.json(
       { error: 'Missing required environment variables' },
       { status: 500 },

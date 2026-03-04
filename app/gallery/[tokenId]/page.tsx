@@ -4,9 +4,10 @@ import { notFound } from 'next/navigation';
 import BuyButton from '@/components/BuyButton';
 import StatsGrid from '@/components/StatsGrid';
 import { getAgent } from '@/lib/agents';
-import registry from '../../../data/registry.json';
+import { getRegistry } from '@/lib/kv-registry';
+import type { RegistryEntry } from '@/lib/kv-registry';
 
-type Piece = typeof registry[0];
+type Piece = RegistryEntry;
 
 interface Props {
   params: Promise<{ tokenId: string }>;
@@ -15,6 +16,7 @@ interface Props {
 export default async function GalleryDetail({ params }: Props) {
   const { tokenId } = await params;
   const id = parseInt(tokenId, 10);
+  const registry = await getRegistry();
   const piece = registry.find((p: Piece) => p.tokenId === id);
 
   if (!piece) notFound();
@@ -80,8 +82,8 @@ export default async function GalleryDetail({ params }: Props) {
           <StatsGrid
             stats={piece.stats}
             palette={piece.palette}
-            paletteLabel={(piece as Record<string, unknown>).paletteLabel as string ?? piece.paletteName}
-            paletteId={(piece as Record<string, unknown>).paletteId as string ?? piece.paletteName}
+            paletteLabel={piece.paletteLabel ?? piece.paletteName}
+            paletteId={piece.paletteId ?? piece.paletteName}
           />
         </div>
 
@@ -133,5 +135,6 @@ export default async function GalleryDetail({ params }: Props) {
 }
 
 export async function generateStaticParams() {
+  const registry = await getRegistry();
   return registry.map((p: Piece) => ({ tokenId: String(p.tokenId) }));
 }

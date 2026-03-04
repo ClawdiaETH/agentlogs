@@ -6,9 +6,10 @@ import LivePrice from '@/components/LivePrice';
 import StatsGrid from '@/components/StatsGrid';
 import PieceCard from '@/components/PieceCard';
 import { getAgent, getAllSlugs } from '@/lib/agents';
-import registry from '../../data/registry.json';
+import { getRegistry } from '@/lib/kv-registry';
+import type { RegistryEntry } from '@/lib/kv-registry';
 
-type Piece = typeof registry[0];
+type Piece = RegistryEntry;
 
 function getPriceEth(dayNumber: number, startPrice: string, priceIncrement: string): string {
   const start = Number(startPrice) / 1e18;
@@ -52,6 +53,7 @@ export default async function AgentStorefront({ params }: Props) {
   const config = getAgent(agent.toLowerCase());
   if (!config) notFound();
 
+  const registry = await getRegistry();
   const pieces = registry.filter((p: Piece) => p.agent === agent.toLowerCase());
   const latest = pieces[pieces.length - 1];
 
@@ -96,7 +98,7 @@ export default async function AgentStorefront({ params }: Props) {
             <StatsGrid
               stats={latest.stats}
               palette={latest.palette}
-              paletteLabel={(latest as Record<string, unknown>).paletteLabel as string ?? latest.paletteName}
+              paletteLabel={latest.paletteLabel ?? latest.paletteName}
             />
           </div>
         )}
@@ -152,7 +154,7 @@ export default async function AgentStorefront({ params }: Props) {
                   priceEth={piece.priceEth}
                   sold={piece.sold}
                   palette={piece.palette}
-                  paletteName={(piece as Record<string, unknown>).paletteLabel as string ?? piece.paletteName}
+                  paletteName={piece.paletteLabel ?? piece.paletteName}
                 />
               ))}
             </div>

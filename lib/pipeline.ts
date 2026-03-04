@@ -2,14 +2,14 @@ import { assembleDayLog } from './assembler';
 import { renderImage } from './renderer';
 import { uploadImage, uploadMetadata } from './pinata';
 import { mintNFT } from './contract';
-import { commitRegistry } from './github-commit';
+import { hasDayNumber, addEntry } from './kv-registry';
 import type { AgentConfig } from './agents';
 import type { DayLog } from './renderer/types';
 
 export interface PipelineSecrets {
   pinataJwt: string;
   privateKey: string;
-  githubToken: string;
+  githubToken?: string;
   contractAddress: string;
   startPrice: string;
   priceIncrement: string;
@@ -96,17 +96,8 @@ export async function runPipeline(secrets: PipelineSecrets): Promise<PipelineRes
   const dayNumber = getDayNumber(secrets.launchDate);
   const date = getDateStr();
 
-  // 0. Duplicate guard — fetch registry and bail if dayNumber already exists
-  const registryUrl = `https://api.github.com/repos/ClawdiaETH/agentlogs/contents/data/registry.json`;
-  const checkResp = await fetch(`${registryUrl}?ref=master`, {
-    headers: { Authorization: `Bearer ${secrets.githubToken}`, 'User-Agent': 'agentsea-pipeline' },
-  });
-  let existingRegistry: Record<string, unknown>[] = [];
-  if (checkResp.ok) {
-    const data = await checkResp.json();
-    existingRegistry = JSON.parse(Buffer.from(data.content, 'base64').toString('utf8'));
-  }
-  const alreadyMinted = existingRegistry.some((p) => p.dayNumber === dayNumber);
+  // 0. Duplicate guard — check KV registry
+  const alreadyMinted = await hasDayNumber(dayNumber);
   if (alreadyMinted) {
     throw new Error(`Day ${dayNumber} already minted — skipping to prevent duplicate`);
   }
@@ -129,9 +120,7 @@ export async function runPipeline(secrets: PipelineSecrets): Promise<PipelineRes
   // 5. Mint NFT
   const { tokenId, txHash } = await mintNFT(metadataUri, secrets.contractAddress, secrets.privateKey);
 
-  // 6. Update registry and commit to GitHub
-  const registry = existingRegistry;
-
+  // 6. Update KV registry
   const startPrice = BigInt(secrets.startPrice);
   const increment = BigInt(secrets.priceIncrement);
   const priceWei = startPrice + increment * BigInt(dayNumber - 1);
@@ -153,28 +142,24 @@ export async function runPipeline(secrets: PipelineSecrets): Promise<PipelineRes
     mintTx: txHash,
     paletteId: dayLog.paletteId,
     paletteLabel: dayLog.paletteLabel,
+    paletteName: dayLog.paletteLabel,
     palette: dayLog.palette,
     seed: `0x${(dayLog.seed >>> 0).toString(16).toUpperCase().padStart(8, '0')}`,
     stats: {
       commits: dayLog.commitCount,
       errors: dayLog.errors,
       messages: dayLog.messages,
+      events: 0,
       txns: dayLog.txns,
       posts: dayLog.posts,
+      peakHour: dayLog.peakHour,
       glitchIndex: Math.round(dayLog.glitchIndex),
       mcap: Math.round(dayLog.marketCap),
       change24h: parseFloat(dayLog.change24h.toFixed(2)),
     },
   };
 
-  registry.push(entry);
-  const registryContent = JSON.stringify(registry, null, 2);
-
-  await commitRegistry(
-    registryContent,
-    `mint: ${seriesTitle} Day ${dayNumber} — ${dayLog.paletteLabel}`,
-    secrets.githubToken,
-  );
+  await addEntry(entry);
 
   return { tokenId, dayNumber, txHash, imageUri, metadataUri };
 }

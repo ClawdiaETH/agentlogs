@@ -4,11 +4,13 @@ import BuyButton from '@/components/BuyButton';
 import StatsGrid from '@/components/StatsGrid';
 import AgentCard from '@/components/AgentCard';
 import { loadAgents } from '@/lib/agents';
-import registry from '../data/registry.json';
+import { getRegistry } from '@/lib/kv-registry';
+import type { RegistryEntry } from '@/lib/kv-registry';
 
-type Piece = typeof registry[0];
+type Piece = RegistryEntry;
 
-export default function Home() {
+export default async function Home() {
+  const registry = await getRegistry();
   const agents = loadAgents();
 
   // Latest minted piece from ANY agent
@@ -136,7 +138,7 @@ export default function Home() {
               <StatsGrid
                 stats={piece.stats}
                 palette={piece.palette}
-                paletteLabel={(piece as Record<string, unknown>).paletteLabel as string ?? piece.paletteName}
+                paletteLabel={piece.paletteLabel ?? piece.paletteName}
               />
             </div>
 
