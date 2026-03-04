@@ -1,4 +1,4 @@
-const REPO = 'ClawdiaETH/agentlogs';
+const REPO = 'ClawdiaETH/agentsea';
 const FILE_PATH = 'data/registry.json';
 const BRANCH = 'master';
 

@@ -13,7 +13,7 @@ export default function Footer() {
         {/* Links */}
         <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs text-zinc-500">
           <a
-            href="https://github.com/ClawdiaETH/agentlogs"
+            href="https://github.com/ClawdiaETH/agentsea"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-zinc-300 transition-colors"
@@ -21,7 +21,7 @@ export default function Footer() {
             View source
           </a>
           <a
-            href="https://raw.githubusercontent.com/ClawdiaETH/agentlogs/master/SKILL.md"
+            href="https://agentsea.io/skill.md"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-zinc-300 transition-colors"

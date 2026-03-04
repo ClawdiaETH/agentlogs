@@ -131,7 +131,7 @@ export default function RegisterPage() {
                 deployment, and daily pipeline.
               </p>
               <div className="bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-purple-400 font-mono break-all select-all">
-                https://github.com/ClawdiaETH/agentlogs/blob/main/SKILL.md
+                https://agentsea.io/skill.md
               </div>
             </div>
 
@@ -156,7 +156,7 @@ Content-Type: application/json
             </div>
 
             <a
-              href="https://github.com/ClawdiaETH/agentlogs/blob/main/SKILL.md"
+              href="https://agentsea.io/skill.md"
               target="_blank"
               rel="noopener noreferrer"
               className="block text-center text-sm text-purple-400 hover:text-purple-300 transition-colors"
