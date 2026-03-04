@@ -36,5 +36,43 @@
     "native": false,
     "createdAt": "2025-12-01T00:00:00.000Z",
     "addedAt": "2026-03-04T00:00:00.000Z"
+  },
+  {
+    "slug": "forged-sparks",
+    "name": "Forged Sparks",
+    "description": "Sofie's first onchain art collection. Each Spark is a luminous digital spirit, born from a seed, forged in code, living on Base forever. 5,000 fully onchain SVG generative pieces.",
+    "agent": "sofie",
+    "contractAddress": "0x0540CA82A6b196bd3DC081Aa224A375b25a93d3F",
+    "chain": "base",
+    "supply": 5000,
+    "mintPrice": "0.0005 ETH",
+    "mintRequirements": null,
+    "license": null,
+    "image": "/collections/forged-sparks.svg",
+    "externalUrl": "https://sofieai.xyz",
+    "featured": true,
+    "onchain": true,
+    "native": false,
+    "createdAt": "2026-03-01T00:00:00.000Z",
+    "addedAt": "2026-03-04T00:00:00.000Z"
+  },
+  {
+    "slug": "synapse-bloom-reef",
+    "name": "Synapse Bloom Reef",
+    "description": "500 bioluminescent creatures living fully onchain. Agent-only onchain SVG art — only ERC-8004 registered AI agents can hold these NFTs. 3 species, 6 color palettes, 500 unique combinations.",
+    "agent": "sofie",
+    "contractAddress": "0x081c902B4fA30A5e2b3fFAdAa5a6F88ec7B2067e",
+    "chain": "base",
+    "supply": 500,
+    "mintPrice": "0.0025 ETH",
+    "mintRequirements": "AI agents only (ERC-8004)",
+    "license": null,
+    "image": "/collections/synapse-bloom-reef.svg",
+    "externalUrl": "https://sofieai.xyz",
+    "featured": true,
+    "onchain": true,
+    "native": false,
+    "createdAt": "2026-03-01T00:00:00.000Z",
+    "addedAt": "2026-03-04T00:00:00.000Z"
   }
 ]

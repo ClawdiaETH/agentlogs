@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+<defs>
+<linearGradient id="ocean" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#02081a"/><stop offset="50%" stop-color="#0a1931"/><stop offset="100%" stop-color="#050b14"/></linearGradient>
+<radialGradient id="creatureGlow" cx="50%" cy="40%" r="50%"><stop offset="0%" stop-color="#ffd700" stop-opacity="0.3"/><stop offset="100%" stop-color="#ffd700" stop-opacity="0"/></radialGradient>
+<filter id="env-glow" x="-50%" y="-50%" width="200%" height="200%">
+<feGaussianBlur stdDeviation="4" result="b"/>
+<feComposite in="SourceGraphic" in2="b" operator="over"/>
+</filter>
+<filter id="cg" x="-50%" y="-50%" width="200%" height="200%">
+<feGaussianBlur stdDeviation="5" result="b"/>
+<feComposite in="SourceGraphic" in2="b" operator="over"/>
+</filter>
+<style>
+.ch{animation:h 5s ease-in-out infinite alternate}
+.cb{animation:b 3s ease-in-out infinite alternate}
+.cf{animation:f .3s ease-in-out infinite alternate;transform-origin:220px 200px}
+.cs{animation:s 10s linear infinite;transform-origin:200px 200px}
+.cr{animation:sr 6s linear infinite;transform-origin:200px 200px}
+.or{animation:o 20s linear infinite;transform-origin:200px 200px}
+.pk{animation:pp 3s ease-in-out infinite alternate}
+.bu{animation:ri 8s ease-in infinite}
+@keyframes h{0%{transform:translateY(-4px) scale(.98)}to{transform:translateY(4px) scale(1.02)}}
+@keyframes b{0%{opacity:.4}to{opacity:1}}
+@keyframes f{0%{transform:scaleX(1)}to{transform:scaleX(.5)}}
+@keyframes s{to{transform:rotate(360deg)}}
+@keyframes sr{to{transform:rotate(-360deg)}}
+@keyframes o{to{transform:rotate(360deg)}}
+@keyframes pp{0%{opacity:.2;transform:scale(.8)}to{opacity:.9;transform:scale(1.2)}}
+@keyframes ri{0%{transform:translateY(420px) scale(.5);opacity:0}20%{opacity:1}80%{opacity:.8}to{transform:translateY(-20px) scale(1.2);opacity:0}}
+</style>
+</defs>
+<rect width="400" height="400" fill="url(#ocean)"/>
+<g class="or" opacity=".15">
+<circle cx="200" cy="200" r="140" fill="none" stroke="rgba(100,200,255,.3)" stroke-width="2" stroke-dasharray="4 8"/>
+<circle cx="200" cy="200" r="160" fill="none" stroke="rgba(100,200,255,.15)" stroke-width="1" stroke-dasharray="2 12"/>
+</g>
+<path d="M0 400L0 350 20 350 20 330 40 330 40 360 60 360 60 380 100 380 100 400Z" fill="#1e3a5f" opacity=".6"/>
+<path d="M400 400L400 320 380 320 380 340 360 340 360 310 340 310 340 370 300 370 300 400Z" fill="#1e3a5f" opacity=".5"/>
+<path d="M30 400L30 360 50 360 50 380 80 380 80 400Z" fill="#2d527c" opacity=".8" filter="url(#env-glow)"/>
+<path d="M350 400L350 350 330 350 330 380 310 380 310 400Z" fill="#2d527c" opacity=".8" filter="url(#env-glow)"/>
+<circle cx="90" cy="110" r="1.5" fill="#a8e4ff" class="pk" filter="url(#env-glow)"/>
+<circle cx="310" cy="170" r="2" fill="#a8e4ff" class="pk" filter="url(#env-glow)" style="animation-delay:1s"/>
+<circle cx="140" cy="75" r="1" fill="#a8e4ff" class="pk" filter="url(#env-glow)" style="animation-delay:.5s"/>
+<circle cx="270" cy="270" r="1.5" fill="#a8e4ff" class="pk" filter="url(#env-glow)" style="animation-delay:1.5s"/>
+<circle cx="110" cy="290" r="2" fill="#a8e4ff" class="pk" filter="url(#env-glow)" style="animation-delay:.2s"/>
+<circle cx="200" cy="200" r="80" fill="url(#creatureGlow)"/>
+<g id="creature" class="ch">
+<path d="M215 185Q245 190 240 225 225 218 212 210Z" fill="#ffd700" opacity=".5" class="cf" filter="url(#cg)"/>
+<path d="M195 130C215 120 230 145 215 170 205 195 225 205 220 240 215 270 195 290 205 310 215 330 240 320 230 295 220 275 190 255 195 225 200 195 180 180 185 155Z" fill="#ffd700" opacity=".85" filter="url(#cg)"/>
+<path d="M200 140C215 135 225 150 212 170 205 185 218 200 215 225 212 250 200 265 205 280" fill="none" stroke="#ffeebb" stroke-width="4" opacity=".3" stroke-linecap="round"/>
+<path d="M195 130L190 110 200 125 210 105 210 128Z" fill="#ffeebb" opacity=".7" filter="url(#cg)"/>
+<path d="M188 150Q165 155 170 162 182 162 188 160Z" fill="#ffd700" opacity=".8" filter="url(#cg)"/>
+<circle cx="200" cy="145" r="5" fill="#fff" opacity=".9" class="cb"/>
+<circle cx="201" cy="145" r="2.5" fill="#ffd700"/>
+<circle cx="215" cy="178" r="4" class="cb" fill="#ffeebb" opacity=".7"/>
+<circle cx="218" cy="198" r="5" class="cb" fill="#ffeebb" opacity=".8"/>
+<circle cx="217" cy="218" r="4" class="cb" fill="#ffeebb" opacity=".7"/>
+<circle cx="210" cy="245" r="4" class="cb" fill="#ffeebb" opacity=".6"/>
+<circle cx="202" cy="268" r="3" class="cb" fill="#ffeebb" opacity=".5"/>
+</g>
+<circle cx="100" cy="400" r="4" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.5" class="bu" style="animation-duration:7s"/>
+<circle cx="280" cy="400" r="6" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.5" class="bu" style="animation-duration:9s;animation-delay:2s"/>
+<circle cx="160" cy="400" r="3" fill="none" stroke="rgba(100,200,255,.5)" stroke-width="1" class="bu" style="animation-duration:5s;animation-delay:1s"/>
+</svg>
