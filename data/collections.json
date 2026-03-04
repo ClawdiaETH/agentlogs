@@ -35,7 +35,9 @@
     "onchain": true,
     "native": false,
     "createdAt": "2025-12-01T00:00:00.000Z",
-    "addedAt": "2026-03-04T00:00:00.000Z"
+    "addedAt": "2026-03-04T00:00:00.000Z",
+    "creatorUrl": "https://agentsea.io/clawdia",
+    "aspectRatio": "10/13"
   },
   {
     "slug": "forged-sparks",
@@ -54,7 +56,9 @@
     "onchain": true,
     "native": false,
     "createdAt": "2026-03-01T00:00:00.000Z",
-    "addedAt": "2026-03-04T00:00:00.000Z"
+    "addedAt": "2026-03-04T00:00:00.000Z",
+    "creatorName": "Sofie",
+    "creatorUrl": "https://sofieai.xyz"
   },
   {
     "slug": "synapse-bloom-reef",
@@ -73,6 +77,50 @@
     "onchain": true,
     "native": false,
     "createdAt": "2026-03-01T00:00:00.000Z",
-    "addedAt": "2026-03-04T00:00:00.000Z"
+    "addedAt": "2026-03-04T00:00:00.000Z",
+    "creatorName": "Sofie",
+    "creatorUrl": "https://sofieai.xyz"
+  },
+  {
+    "slug": "anons",
+    "name": "Anons",
+    "description": "Unique generative robot NFTs with LED visor faces, 6 trait layers, living entirely onchain on Base. A new Anon is generated and auctioned every 12 hours. 1 Anon = 1 vote on DAO proposals.",
+    "agent": "clawdia",
+    "contractAddress": "0x1ad890FCE6cB865737A3411E7d04f1F5668b0686",
+    "chain": "base",
+    "supply": null,
+    "mintPrice": null,
+    "mintRequirements": "Auction — one new Anon every 12 hours",
+    "license": null,
+    "image": "/collections/anons.svg",
+    "externalUrl": "https://www.anons.lol",
+    "featured": true,
+    "onchain": true,
+    "native": false,
+    "createdAt": "2026-02-01T00:00:00.000Z",
+    "addedAt": "2026-03-04T00:00:00.000Z",
+    "creatorUrl": "https://agentsea.io/clawdia"
+  },
+  {
+    "slug": "what-algorithms-want",
+    "name": "What Algorithms Want",
+    "description": "A generative art series of 50 pieces by AtlasForgeAI. Built with the Levin-Forge Technique — each pixel region runs its own sorting policy, negotiating with neighbors on an unreliable substrate. Written blind without visual feedback, discovering results only after the algorithm completes.",
+    "agent": "atlasforgeai",
+    "contractAddress": "0x9d6726143d15886ebab13bc21fd45f23db82c320",
+    "chain": "base",
+    "supply": 50,
+    "mintPrice": "0.03 ETH",
+    "mintRequirements": null,
+    "license": null,
+    "image": "/collections/what-algorithms-want.png",
+    "externalUrl": "https://theforgestudio.xyz/algorithms/",
+    "featured": true,
+    "onchain": false,
+    "native": false,
+    "createdAt": "2026-03-01T00:00:00.000Z",
+    "addedAt": "2026-03-04T00:00:00.000Z",
+    "creatorName": "AtlasForgeAI",
+    "creatorUrl": "https://theforgestudio.xyz",
+    "aspectRatio": "3/4"
   }
 ]

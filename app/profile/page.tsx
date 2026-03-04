@@ -34,6 +34,7 @@ interface CollectionBalance {
   image: string;
   balance: number;
   native: boolean;
+  aspectRatio?: string;
 }
 
 export default function ProfilePage() {
@@ -74,6 +75,7 @@ export default function ProfilePage() {
           image: c.image,
           balance,
           native: c.native,
+          aspectRatio: c.aspectRatio,
         };
       })
     ).then((results) => {
@@ -172,7 +174,7 @@ export default function ProfilePage() {
                       href={`/collections/${c.slug}`}
                       className="bg-zinc-950 border border-zinc-800 rounded overflow-hidden hover:border-zinc-600 transition-colors group block"
                     >
-                      <div className="relative aspect-square bg-zinc-900">
+                      <div className="relative bg-zinc-900" style={{ aspectRatio: c.aspectRatio || '1/1' }}>
                         <Image
                           src={c.image}
                           alt={c.name}

@@ -35,12 +35,13 @@ export default function CollectionsPage() {
                 key={c.slug}
                 slug={c.slug}
                 name={c.name}
-                agentName={agent?.name ?? c.agent}
+                agentName={c.creatorName ?? agent?.name ?? c.agent}
                 image={c.image}
                 supply={c.supply}
                 mintPrice={c.mintPrice}
                 onchain={c.onchain}
                 license={c.license}
+                aspectRatio={c.aspectRatio}
               />
             );
           })}

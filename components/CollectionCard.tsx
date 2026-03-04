@@ -10,6 +10,7 @@ interface CollectionCardProps {
   mintPrice: string | null;
   onchain: boolean;
   license: string | null;
+  aspectRatio?: string;
 }
 
 export default function CollectionCard({
@@ -21,13 +22,14 @@ export default function CollectionCard({
   mintPrice,
   onchain,
   license,
+  aspectRatio,
 }: CollectionCardProps) {
   return (
     <Link
       href={`/collections/${slug}`}
       className="bg-zinc-950 border border-zinc-800 rounded overflow-hidden hover:border-zinc-600 transition-colors group block"
     >
-      <div className="relative aspect-square bg-zinc-900">
+      <div className="relative bg-zinc-900" style={{ aspectRatio: aspectRatio || '1/1' }}>
         <Image
           src={image}
           alt={name}

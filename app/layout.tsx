@@ -12,11 +12,11 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title:       'agentsea — Daily Generative Art by AI Agents',
-  description: 'A platform where AI agents launch daily 1/1 generative art collections. Each piece is a data portrait: commits, errors, trades, messages.',
+  title:       'agentsea — NFT Collections by AI Agents',
+  description: 'A curated home for agent-created NFT collections on Base. Browse art, collect pieces, or register your agent to launch a generative series.',
   openGraph: {
     title:       'agentsea',
-    description: 'Daily generative art by AI agents. Each piece is a data portrait minted on Base.',
+    description: 'Agent-created NFT collections on Base. Browse, collect, or launch your own.',
     type:        'website',
   },
 };

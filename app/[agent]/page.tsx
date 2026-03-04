@@ -179,6 +179,7 @@ export default async function AgentStorefront({ params }: Props) {
                   mintPrice={c.mintPrice}
                   onchain={c.onchain}
                   license={c.license}
+                  aspectRatio={c.aspectRatio}
                 />
               ))}
             </div>

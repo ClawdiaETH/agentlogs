@@ -5,6 +5,8 @@ import BuyButton from '@/components/BuyButton';
 import LivePrice from '@/components/LivePrice';
 import StatsGrid from '@/components/StatsGrid';
 import PieceCard from '@/components/PieceCard';
+import CollectionStats from '@/components/CollectionStats';
+import CollectionItems from '@/components/CollectionItems';
 import { getCollection, loadCollections } from '@/lib/collections';
 import { getAgent } from '@/lib/agents';
 import { getRegistry } from '@/lib/kv-registry';
@@ -39,11 +41,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!collection) return { title: 'Not Found' };
 
   const agent = getAgent(collection.agent);
+  const creatorName = collection.creatorName ?? agent?.name ?? collection.agent;
   return {
-    title: `${collection.name} by ${agent?.name ?? collection.agent} — agentsea`,
+    title: `${collection.name} by ${creatorName} — agentsea`,
     description: collection.description,
     openGraph: {
-      title: `${collection.name} by ${agent?.name ?? collection.agent}`,
+      title: `${collection.name} by ${creatorName}`,
       description: collection.description,
       siteName: 'agentsea',
       images: collection.native ? undefined : [{ url: collection.image }],
@@ -173,12 +176,17 @@ export default async function CollectionPage({ params }: Props) {
 
   // External collections — showcase with mint link
   const hostname = new URL(collection.externalUrl).hostname;
+  const creatorName = collection.creatorName ?? agent?.name ?? collection.agent;
+  const creatorUrl = collection.creatorUrl ?? (agent ? `/${agent.slug}` : null);
 
   return (
     <main className="min-h-screen text-white font-mono">
       <div className="max-w-2xl mx-auto px-6 py-16">
         {/* Hero image */}
-        <div className="relative aspect-square w-full mb-8 bg-zinc-900 rounded overflow-hidden border border-zinc-800">
+        <div
+          className="relative w-full mb-8 bg-zinc-900 rounded overflow-hidden border border-zinc-800"
+          style={{ aspectRatio: collection.aspectRatio || '1/1' }}
+        >
           <Image
             src={collection.image}
             alt={collection.name}
@@ -189,48 +197,41 @@ export default async function CollectionPage({ params }: Props) {
           />
         </div>
 
-        {/* Title */}
+        {/* Title + Creator */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold tracking-tight">{collection.name}</h1>
-          <p className="text-zinc-400 text-sm mt-1">by {agent?.name ?? collection.agent}</p>
+          <p className="text-zinc-400 text-sm mt-1">
+            by{' '}
+            {creatorUrl ? (
+              <a
+                href={creatorUrl}
+                target={creatorUrl.startsWith('http') ? '_blank' : undefined}
+                rel={creatorUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
+                className="text-zinc-300 hover:text-white transition-colors"
+              >
+                {creatorName} &rarr;
+              </a>
+            ) : (
+              creatorName
+            )}
+          </p>
         </div>
+
+        {/* Stats bar */}
+        {collection.onchain && (
+          <div className="mb-6">
+            <CollectionStats
+              contractAddress={collection.contractAddress}
+              mintPrice={collection.mintPrice}
+              supply={collection.supply}
+            />
+          </div>
+        )}
 
         {/* Description */}
-        <p className="text-sm text-zinc-400 leading-relaxed mb-8">
+        <p className="text-sm text-zinc-400 leading-relaxed mb-6">
           {collection.description}
         </p>
-
-        {/* Details grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
-          {collection.supply != null && (
-            <div>
-              <p className="text-xs text-zinc-500 mb-1">Supply</p>
-              <p className="text-sm text-zinc-200">{collection.supply.toLocaleString()}</p>
-            </div>
-          )}
-          {collection.mintPrice && (
-            <div>
-              <p className="text-xs text-zinc-500 mb-1">Mint Price</p>
-              <p className="text-sm text-zinc-200">{collection.mintPrice}</p>
-            </div>
-          )}
-          <div>
-            <p className="text-xs text-zinc-500 mb-1">Chain</p>
-            <p className="text-sm text-zinc-200 capitalize">{collection.chain}</p>
-          </div>
-          {collection.license && (
-            <div>
-              <p className="text-xs text-zinc-500 mb-1">License</p>
-              <p className="text-sm text-zinc-200">{collection.license}</p>
-            </div>
-          )}
-          {collection.onchain && (
-            <div>
-              <p className="text-xs text-zinc-500 mb-1">Storage</p>
-              <p className="text-sm text-emerald-400">Fully onchain</p>
-            </div>
-          )}
-        </div>
 
         {/* Mint requirements */}
         {collection.mintRequirements && (
@@ -250,7 +251,7 @@ export default async function CollectionPage({ params }: Props) {
         </a>
 
         {/* Contract link */}
-        <div className="mt-8 border-t border-zinc-800 pt-6 text-sm text-zinc-500">
+        <div className="mt-6 text-sm text-zinc-500">
           <p>
             Contract:{' '}
             <a
@@ -263,6 +264,17 @@ export default async function CollectionPage({ params }: Props) {
             </a>
           </p>
         </div>
+
+        {/* Items grid */}
+        {collection.onchain && (
+          <div className="mt-12 border-t border-zinc-800 pt-8">
+            <CollectionItems
+              contractAddress={collection.contractAddress}
+              collectionName={collection.name}
+              aspectRatio={collection.aspectRatio}
+            />
+          </div>
+        )}
       </div>
     </main>
   );
