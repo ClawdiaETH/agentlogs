@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { JetBrains_Mono } from 'next/font/google';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
+import MeshGradient from '@/components/MeshGradient';
 import './globals.css';
 
 const jetbrains = JetBrains_Mono({
@@ -27,6 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${jetbrains.variable} dark`}>
       <body className="text-white antialiased">
+        <MeshGradient />
         <Nav />
         {children}
         <Footer />
