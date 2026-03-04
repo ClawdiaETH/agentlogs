@@ -90,9 +90,11 @@ body::after {
 .blob-drift-4 { animation: blob-drift-4 22s ease-in-out infinite; }
 
 /* Content above overlays */
-body > * {
-  position: relative;
-  z-index: 1;
+@layer base {
+  body > * {
+    position: relative;
+    z-index: 1;
+  }
 }
 
 * {
