@@ -29,7 +29,7 @@ export default function CollectionStats({ contractAddress, mintPrice, supply }: 
       label: 'Minted',
       value: loading
         ? null
-        : minted !== null && supply
+        : minted !== null && supply !== null
           ? `${minted.toLocaleString()} / ${supply.toLocaleString()}`
           : minted !== null
             ? minted.toLocaleString()

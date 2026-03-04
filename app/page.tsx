@@ -139,7 +139,7 @@ export default async function Home() {
                     key={c.slug}
                     slug={c.slug}
                     name={c.name}
-                    agentName={collAgent?.name ?? c.agent}
+                    agentName={c.creatorName ?? collAgent?.name ?? c.agent}
                     image={c.image}
                     supply={c.supply}
                     mintPrice={c.mintPrice}
