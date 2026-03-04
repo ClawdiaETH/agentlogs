@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { rpcCall } from '@/lib/rpc';
 
 const PAGE_SIZE = 12;
+const BATCH_SIZE = 3;
 
 async function resolveTokenURI(hex: string): Promise<{ name: string; image: string } | null> {
   if (!hex || hex === '0x') return null;
@@ -111,19 +112,25 @@ export default function CollectionItems({ contractAddress, collectionName, aspec
     }
     if (ids.length === 0) return [];
 
-    const results = await Promise.all(
-      ids.map(async (tokenId) => {
-        const paddedId = tokenId.toString(16).padStart(64, '0');
-        try {
-          const result = await rpcCall(contractAddress, `0xc87b56dd${paddedId}`);
-          const decoded = await resolveTokenURI(result);
-          if (decoded) {
-            return { tokenId, name: decoded.name, image: decoded.image };
-          }
-        } catch {}
-        return null;
-      })
-    );
+    // Process in small batches to avoid RPC rate limits
+    const results: (TokenItem | null)[] = [];
+    for (let b = 0; b < ids.length; b += BATCH_SIZE) {
+      const batch = ids.slice(b, b + BATCH_SIZE);
+      const batchResults = await Promise.all(
+        batch.map(async (tokenId) => {
+          const paddedId = tokenId.toString(16).padStart(64, '0');
+          try {
+            const result = await rpcCall(contractAddress, `0xc87b56dd${paddedId}`);
+            const decoded = await resolveTokenURI(result);
+            if (decoded) {
+              return { tokenId, name: decoded.name, image: decoded.image };
+            }
+          } catch {}
+          return null;
+        })
+      );
+      results.push(...batchResults);
+    }
 
     return results.filter((r): r is TokenItem => r !== null);
   }, [contractAddress, startTokenId, totalSupply]);
