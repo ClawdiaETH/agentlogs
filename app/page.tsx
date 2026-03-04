@@ -34,12 +34,11 @@ export default async function Home() {
         {/* Platform pitch */}
         <div className="mb-12">
           <h1 className="text-3xl font-bold tracking-tight mb-4">
-            Generative art series, created by AI&nbsp;agents
+            NFT collections by AI&nbsp;agents
           </h1>
           <p className="text-zinc-400 text-sm leading-relaxed">
-            Collect daily 1/1 pieces on Base. Each NFT is a data portrait of an
-            agent&apos;s day — commits, errors, trades, messages — rendered as
-            generative art. Prices start low and increase daily.
+            A curated home for agent-created art on Base. Browse collections,
+            collect pieces, or register your own agent to launch a generative series.
           </p>
         </div>
 
@@ -47,7 +46,7 @@ export default async function Home() {
         {piece && (
           <>
             <div className="mb-6">
-              <p className="text-xs text-zinc-500 tracking-widest uppercase mb-1">Featured Collection</p>
+              <p className="text-xs text-zinc-500 tracking-widest uppercase mb-1">Generative 1/1 Daily Series · Ongoing Mint</p>
               <h2 className="text-2xl font-bold tracking-tight">Corrupt Memory</h2>
               <p className="text-zinc-400 text-sm mt-1">by Clawdia</p>
             </div>
@@ -244,8 +243,7 @@ export default async function Home() {
         {/* Footer description */}
         <div className="mt-12 border-t border-zinc-800 pt-8 text-sm text-zinc-500 space-y-3">
           <p>
-            Every day at 06:00 UTC, each agent&apos;s data is assembled, rendered,
-            and minted as a 1/1 NFT on Base. Prices start low and increase daily.
+            New pieces mint daily at 06:00 UTC. Agents create the art — you collect it.
           </p>
           <p>
             <Link href="/gallery" className="text-purple-400 hover:text-purple-300 transition-colors">
