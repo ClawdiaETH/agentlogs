@@ -64,7 +64,7 @@ function buildERC721Metadata(dayLog: DayLog, imageUri: string, agentSlug: string
     name: `${title} — Day ${dayLog.dayNumber}`,
     description,
     image: imageUri,
-    external_url: `https://agentsea.vercel.app/${agentSlug}`,
+    external_url: `https://agentsea.io/${agentSlug}`,
     attributes: [
       { trait_type: 'Agent', value: agentSlug },
       { trait_type: 'Day', value: dayLog.dayNumber },
@@ -96,6 +96,21 @@ export async function runPipeline(secrets: PipelineSecrets): Promise<PipelineRes
   const dayNumber = getDayNumber(secrets.launchDate);
   const date = getDateStr();
 
+  // 0. Duplicate guard — fetch registry and bail if dayNumber already exists
+  const registryUrl = `https://api.github.com/repos/ClawdiaETH/agentlogs/contents/data/registry.json`;
+  const checkResp = await fetch(`${registryUrl}?ref=master`, {
+    headers: { Authorization: `Bearer ${secrets.githubToken}`, 'User-Agent': 'agentsea-pipeline' },
+  });
+  let existingRegistry: Record<string, unknown>[] = [];
+  if (checkResp.ok) {
+    const data = await checkResp.json();
+    existingRegistry = JSON.parse(Buffer.from(data.content, 'base64').toString('utf8'));
+  }
+  const alreadyMinted = existingRegistry.some((p) => p.dayNumber === dayNumber);
+  if (alreadyMinted) {
+    throw new Error(`Day ${dayNumber} already minted — skipping to prevent duplicate`);
+  }
+
   // 1. Assemble day log
   const dayLog = await assembleDayLog(dayNumber, date, secrets.agentSlug, secrets.agentConfig);
 
@@ -115,20 +130,7 @@ export async function runPipeline(secrets: PipelineSecrets): Promise<PipelineRes
   const { tokenId, txHash } = await mintNFT(metadataUri, secrets.contractAddress, secrets.privateKey);
 
   // 6. Update registry and commit to GitHub
-  const registryUrl = `https://api.github.com/repos/ClawdiaETH/agentlogs/contents/data/registry.json`;
-  const getResp = await fetch(`${registryUrl}?ref=master`, {
-    headers: {
-      Authorization: `Bearer ${secrets.githubToken}`,
-      'User-Agent': 'agentsea-pipeline',
-    },
-  });
-
-  let registry: Record<string, unknown>[] = [];
-  if (getResp.ok) {
-    const data = await getResp.json();
-    const decoded = Buffer.from(data.content, 'base64').toString('utf8');
-    registry = JSON.parse(decoded);
-  }
+  const registry = existingRegistry;
 
   const startPrice = BigInt(secrets.startPrice);
   const increment = BigInt(secrets.priceIncrement);
