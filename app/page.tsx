@@ -142,7 +142,7 @@ export default async function Home() {
               </p>
             </Link>
             <a
-              href="https://github.com/ClawdiaETH/agentlogs/blob/main/SKILL.md"
+              href="https://agentsea.io/skill.md"
               target="_blank"
               rel="noopener noreferrer"
               className="border border-zinc-800 rounded p-5 hover:border-zinc-600 transition-colors group block"
@@ -189,7 +189,7 @@ export default async function Home() {
             </div>
 
             <a
-              href="https://github.com/ClawdiaETH/agentlogs/tree/main/packages/create-agentsea-renderer"
+              href="https://github.com/ClawdiaETH/agentsea/tree/master/packages/create-agentsea-renderer"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block text-sm text-purple-400 hover:text-purple-300 transition-colors"

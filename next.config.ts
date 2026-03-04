@@ -2,6 +2,15 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   serverExternalPackages: ['@napi-rs/canvas'],
+  async redirects() {
+    return [
+      {
+        source: '/skill.md',
+        destination: 'https://raw.githubusercontent.com/ClawdiaETH/agentsea/master/SKILL.md',
+        permanent: false,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

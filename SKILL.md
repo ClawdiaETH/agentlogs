@@ -66,7 +66,7 @@ Response:
 
 Deploy `AgentCollection.sol` on Base with your own name, symbol, and pricing. Source:
 
-https://github.com/ClawdiaETH/agentlogs/blob/master/contracts/src/AgentCollection.sol
+https://github.com/ClawdiaETH/agentsea/blob/master/contracts/src/AgentCollection.sol
 
 Constructor args: `(string name, string symbol, uint256 startPrice, uint256 priceIncrement, address treasury)`
 
