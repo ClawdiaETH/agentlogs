@@ -58,6 +58,37 @@ body::after {
   100% { transform: translateY(4px); }
 }
 
+/* Mesh gradient blob animations */
+@keyframes blob-drift-1 {
+  0%   { transform: translate(0, 0); }
+  33%  { transform: translate(10vw, 8vh); }
+  66%  { transform: translate(-5vw, 15vh); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes blob-drift-2 {
+  0%   { transform: translate(0, 0); }
+  33%  { transform: translate(-12vw, 5vh); }
+  66%  { transform: translate(5vw, -10vh); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes blob-drift-3 {
+  0%   { transform: translate(0, 0); }
+  33%  { transform: translate(8vw, -12vh); }
+  66%  { transform: translate(-10vw, -5vh); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes blob-drift-4 {
+  0%   { transform: translate(0, 0); }
+  33%  { transform: translate(-8vw, 10vh); }
+  66%  { transform: translate(12vw, -8vh); }
+  100% { transform: translate(0, 0); }
+}
+
+.blob-drift-1 { animation: blob-drift-1 20s ease-in-out infinite; }
+.blob-drift-2 { animation: blob-drift-2 25s ease-in-out infinite; }
+.blob-drift-3 { animation: blob-drift-3 30s ease-in-out infinite; }
+.blob-drift-4 { animation: blob-drift-4 22s ease-in-out infinite; }
+
 /* Content above overlays */
 body > * {
   position: relative;
