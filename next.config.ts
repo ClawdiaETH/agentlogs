@@ -23,6 +23,11 @@ const nextConfig: NextConfig = {
         hostname: "ipfs.io",
         pathname: "/ipfs/**",
       },
+      {
+        protocol: "https",
+        hostname: "onchainlobsters.xyz",
+        pathname: "/api/**",
+      },
     ],
   },
 };
