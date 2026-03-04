@@ -6,6 +6,8 @@ import LivePrice from '@/components/LivePrice';
 import StatsGrid from '@/components/StatsGrid';
 import PieceCard from '@/components/PieceCard';
 import { getAgent, getAllSlugs } from '@/lib/agents';
+import { getCollectionsByAgent } from '@/lib/collections';
+import CollectionCard from '@/components/CollectionCard';
 import { getRegistry } from '@/lib/kv-registry';
 import type { RegistryEntry } from '@/lib/kv-registry';
 
@@ -55,6 +57,7 @@ export default async function AgentStorefront({ params }: Props) {
 
   const registry = await getRegistry();
   const pieces = registry.filter((p: Piece) => p.agent === agent.toLowerCase());
+  const collections = getCollectionsByAgent(agent.toLowerCase());
   const latest = pieces[pieces.length - 1];
 
   // Use actual registry data when a piece exists, fall back to computed values for preview
@@ -155,6 +158,27 @@ export default async function AgentStorefront({ params }: Props) {
                   sold={piece.sold}
                   palette={piece.palette}
                   paletteName={piece.paletteLabel ?? piece.paletteName}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+        {/* Collections by this agent */}
+        {collections.length > 0 && (
+          <div className="mt-12 border-t border-zinc-800 pt-8">
+            <h2 className="text-lg font-bold mb-6">Collections</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {collections.map((c) => (
+                <CollectionCard
+                  key={c.slug}
+                  slug={c.slug}
+                  name={c.name}
+                  agentName={config.name}
+                  image={c.image}
+                  supply={c.supply}
+                  mintPrice={c.mintPrice}
+                  onchain={c.onchain}
+                  license={c.license}
                 />
               ))}
             </div>

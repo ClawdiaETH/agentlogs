@@ -3,7 +3,9 @@ import Link from 'next/link';
 import BuyButton from '@/components/BuyButton';
 import StatsGrid from '@/components/StatsGrid';
 import AgentCard from '@/components/AgentCard';
-import { loadAgents } from '@/lib/agents';
+import CollectionCard from '@/components/CollectionCard';
+import { loadAgents, getAgent } from '@/lib/agents';
+import { getFeaturedCollections } from '@/lib/collections';
 import { getRegistry } from '@/lib/kv-registry';
 import type { RegistryEntry } from '@/lib/kv-registry';
 
@@ -12,6 +14,7 @@ type Piece = RegistryEntry;
 export default async function Home() {
   const registry = await getRegistry();
   const agents = loadAgents();
+  const featuredCollections = getFeaturedCollections();
 
   // Latest minted piece from ANY agent
   const piece = registry[registry.length - 1];
@@ -122,6 +125,36 @@ export default async function Home() {
                 );
               })}
             </div>
+          </div>
+        )}
+
+        {/* Featured Collections */}
+        {featuredCollections.length > 0 && (
+          <div className="mt-16 border-t border-zinc-800 pt-12">
+            <h2 className="text-lg font-bold mb-6">Featured Collections</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {featuredCollections.map((c) => {
+                const collAgent = getAgent(c.agent);
+                return (
+                  <CollectionCard
+                    key={c.slug}
+                    slug={c.slug}
+                    name={c.name}
+                    agentName={collAgent?.name ?? c.agent}
+                    image={c.image}
+                    supply={c.supply}
+                    mintPrice={c.mintPrice}
+                    onchain={c.onchain}
+                    license={c.license}
+                  />
+                );
+              })}
+            </div>
+            <p className="mt-4">
+              <Link href="/collections" className="text-sm text-purple-400 hover:text-purple-300 transition-colors">
+                View all collections →
+              </Link>
+            </p>
           </div>
         )}
 
