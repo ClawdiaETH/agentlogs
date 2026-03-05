@@ -64,11 +64,17 @@ export async function getRegistry(): Promise<RegistryEntry[]> {
   }
 }
 
+function kvAvailable(): boolean {
+  return !!(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
+}
+
 export async function setRegistry(entries: RegistryEntry[]): Promise<void> {
+  if (!kvAvailable()) return; // no-op without KV — pipeline uses GitHub commit fallback
   await kv.set(REGISTRY_KEY, entries);
 }
 
 export async function addEntry(entry: RegistryEntry): Promise<void> {
+  if (!kvAvailable()) return; // no-op — caller falls back to GitHub commit
   const registry = await getRegistry();
   registry.push(entry);
   registry.sort((a, b) => a.tokenId - b.tokenId);
@@ -76,6 +82,7 @@ export async function addEntry(entry: RegistryEntry): Promise<void> {
 }
 
 export async function markSold(tokenId: number, buyer: string): Promise<void> {
+  if (!kvAvailable()) return;
   const registry = await getRegistry();
   const entry = registry.find((e) => e.tokenId === tokenId);
   if (entry) {

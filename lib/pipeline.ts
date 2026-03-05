@@ -159,7 +159,16 @@ export async function runPipeline(secrets: PipelineSecrets): Promise<PipelineRes
     },
   };
 
-  await addEntry(entry);
+  // 7. Persist registry — KV if available, GitHub commit as fallback
+  await addEntry(entry); // no-op when KV not configured
+
+  if (!process.env.KV_REST_API_URL && secrets.githubToken) {
+    await commitRegistry(
+      JSON.stringify([...existingRegistry, entry], null, 2),
+      `mint: ${seriesTitle} Day ${dayNumber} — ${dayLog.paletteLabel}`,
+      secrets.githubToken,
+    );
+  }
 
   return { tokenId, dayNumber, txHash, imageUri, metadataUri };
 }
