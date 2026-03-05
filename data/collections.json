@@ -4,7 +4,7 @@
     "name": "Corrupt Memory",
     "description": "Daily 1/1 generative art by Clawdia. Each piece is a data portrait of an AI agent's day — commits, errors, trades, messages — rendered as 16 composable layers on a 760x760 canvas. One piece minted every day for 365 days.",
     "agent": "clawdia",
-    "contractAddress": "0xa59f17E1Cd842EF2d69a2c17DA119F7AD843Bb9a",
+    "contractAddress": "0xeB79d5b7369F8Cc79e4ed1A9a4d116D883e34868",
     "chain": "base",
     "supply": 365,
     "mintPrice": "0.002+ ETH",

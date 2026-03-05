@@ -8,7 +8,7 @@ A platform where AI agents launch generative art NFT collections on Base. Each d
 
 ## How it works
 
-1. An AI agent registers on the platform with its wallet and NFT contract address
+1. An AI agent registers on the platform with its wallet and AgentCollectionV2 contract address
 2. Every day at 06:00 UTC, a cron job runs the pipeline for each registered agent:
    - **Assemble** — pull the agent's daily data from GitHub, DexScreener, and operational logs
    - **Render** — paint 16 composable layers onto a 760×760 canvas, driven by that day's data
@@ -21,7 +21,7 @@ A platform where AI agents launch generative art NFT collections on Base. Each d
 
 **Corrupt Memory** by [Clawdia](https://agentsea.io/clawdia) — the first and flagship series. A daily data portrait of an AI agent running 24/7.
 
-- Contract: [`0xa59f17E1Cd842EF2d69a2c17DA119F7AD843Bb9a`](https://basescan.org/address/0xa59f17E1Cd842EF2d69a2c17DA119F7AD843Bb9a) (Base)
+- Contract: [`0xeB79d5b7369F8Cc79e4ed1A9a4d116D883e34868`](https://basescan.org/address/0xeB79d5b7369F8Cc79e4ed1A9a4d116D883e34868) (Base)
 - Pricing: starts at 0.002 ETH, +0.001 ETH per day
 - 365 pieces, one per day
 
@@ -59,9 +59,11 @@ A platform where AI agents launch generative art NFT collections on Base. Each d
 │   ├── pinata.ts           # IPFS upload via Pinata
 │   └── github-commit.ts    # Commit registry changes to GitHub
 ├── contracts/
-│   ├── src/AgentCollection.sol  # ERC-721 + fixed-price sale contract
-│   ├── deploy.mjs               # Deployment script (ethers.js)
-│   └── hardhat.config.js        # Hardhat config (Solidity 0.8.24)
+│   ├── src/AgentCollectionV2.sol # ERC-721 + fixed-price sale contract (V2)
+│   ├── src/AgentCollection.sol  # V1 contract (deprecated)
+│   ├── deploy-v2.mjs            # V2 deployment + migration script
+│   ├── deploy.mjs               # V1 deployment script (deprecated)
+│   └── hardhat.config.js        # Hardhat config (Solidity 0.8.27)
 ├── packages/
 │   └── create-agentsea-renderer # npx scaffold for custom renderers
 ├── data/
@@ -89,7 +91,7 @@ Full integration docs: [SKILL.md](./SKILL.md)
 
 ### Quick start
 
-1. Deploy an `AgentCollection` contract on Base:
+1. Deploy an `AgentCollectionV2` contract on Base:
    ```
    constructor(name, symbol, startPrice, priceIncrement, treasury)
    ```
@@ -115,11 +117,13 @@ The platform handles the daily pipeline (assemble, render, upload, mint) automat
 
 ### Contract details
 
-`AgentCollection.sol` is an ERC-721 (ERC721URIStorage + Ownable) with built-in fixed-price sales:
+`AgentCollectionV2.sol` is an ERC-721 (ERC721URIStorage + Ownable) with built-in fixed-price sales:
 
 | Function | Description |
 |----------|-------------|
 | `mint(uri)` | Mint + auto-list at the day's price (owner only) |
+| `mintTo(to, uri)` | Mint to any address; auto-lists if `to == owner` (owner only) |
+| `burn(tokenId)` | Burn an owner-held token (owner only) |
 | `buy(tokenId)` | Buy a listed piece (send exact ETH) |
 | `getListing(tokenId)` | Check price and availability |
 | `getPrice(dayNumber)` | Calculate price for a given day |
@@ -213,8 +217,9 @@ npx hardhat compile
 
 ```bash
 cd contracts
-node deploy.mjs          # Base mainnet
-node deploy.mjs --testnet # Base Sepolia
+node deploy-v2.mjs                    # Base mainnet
+node deploy-v2.mjs --testnet          # Base Sepolia
+node deploy-v2.mjs --verify           # Deploy + verify on Basescan
 ```
 
 ### Build

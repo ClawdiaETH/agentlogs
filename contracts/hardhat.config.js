@@ -26,5 +26,16 @@ module.exports = {
       url: "https://sepolia.base.org",
       chainId: 84532
     }
+  },
+  etherscan: {
+    apiKey: process.env.BASESCAN_API_KEY || '',
+    customChains: [{
+      network: "base",
+      chainId: 8453,
+      urls: {
+        apiURL: "https://api.etherscan.io/v2/api?chainid=8453",
+        browserURL: "https://basescan.org"
+      }
+    }]
   }
 };
