@@ -81,7 +81,7 @@ export default function ProfilePage() {
 
     await Promise.all(externalCollections.map(async (collection) => {
       try {
-        const tokenIds = await discoverOwnedTokens(collection.contractAddress, address);
+        const tokenIds = await discoverOwnedTokens(collection.contractAddress, address, collection.createdAt);
         if (isStale()) return;
 
         if (tokenIds.length === 0) {

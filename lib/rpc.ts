@@ -34,7 +34,9 @@ export interface LogEntry {
   logIndex: string;
 }
 
-const CHUNK_SIZE = 5000; // blocks per getLogs query (safe for public RPCs)
+// Alchemy supports large ranges; public RPCs typically cap at ~2k-10k.
+// 100k blocks ≈ ~2.3 days on Base (2s block time).
+const CHUNK_SIZE = 100_000;
 
 export async function rpcGetBlockNumber(): Promise<number> {
   const res = await fetch(BASE_RPC, {
