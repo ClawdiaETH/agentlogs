@@ -70,8 +70,11 @@ export default function BuyButton({
         <button
           onClick={() => {
             setError(null);
-            // Connect with first available connector
-            const connector = connectors[0];
+            const injected = connectors.find(
+              (c) => c.type === 'injected' && typeof window !== 'undefined' && window.ethereum,
+            );
+            const wc = connectors.find((c) => c.type === 'walletConnect');
+            const connector = injected ?? wc ?? connectors[0];
             if (connector) connect({ connector });
           }}
           className="w-full rounded bg-purple-700 hover:bg-purple-600 text-white font-bold px-6 py-4 text-lg transition-colors cursor-pointer"
