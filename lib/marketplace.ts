@@ -6,8 +6,8 @@ const MARKET_ADDRESS = process.env.NEXT_PUBLIC_MARKET_CONTRACT || '';
 // Listed(address indexed nft, uint256 indexed tokenId, address indexed seller, uint256 price)
 const LISTED_TOPIC = keccak256(toHex('Listed(address,uint256,address,uint256)'));
 
-// 30 days of blocks on Base (2s block time)
-const SCAN_BLOCKS = 30 * 24 * 60 * 30; // ~1,296,000
+// 7 days of blocks on Base (2s block time) — marketplace is new
+const SCAN_BLOCKS = 7 * 24 * 60 * 30; // ~302,400
 
 function formatEthDisplay(valueWei: bigint): string {
   const [whole, fraction = ''] = formatEther(valueWei).split('.');

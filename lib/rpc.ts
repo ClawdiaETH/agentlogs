@@ -59,12 +59,14 @@ export async function rpcGetLogs(params: {
 }): Promise<LogEntry[]> {
   const head = params.toBlock ?? await rpcGetBlockNumber();
   const allLogs: LogEntry[] = [];
-  const ranges: Array<{ from: number; to: number }> = [];
 
+  // Build chunk ranges
+  const ranges: Array<{ from: number; to: number }> = [];
   for (let from = params.fromBlock; from <= head; from += CHUNK_SIZE + 1) {
     ranges.push({ from, to: Math.min(from + CHUNK_SIZE, head) });
   }
 
+  // Process chunks in parallel batches
   for (let i = 0; i < ranges.length; i += MAX_CONCURRENT_LOG_QUERIES) {
     const batch = ranges.slice(i, i + MAX_CONCURRENT_LOG_QUERIES);
     const batchResults = await Promise.all(

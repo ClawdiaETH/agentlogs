@@ -2,14 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { getAllActiveListings, getMarketAddress } from '@/lib/marketplace';
-import type { MarketListing } from '@/lib/marketplace';
-import { fetchTokenMetadata } from '@/lib/token-metadata';
-import { getCollectionByAddress } from '@/lib/collections-client';
+import { getMarketAddress } from '@/lib/marketplace';
 import MarketBuyButton from '@/components/MarketBuyButton';
 
 interface ListingCard {
-  listing: MarketListing<string>;
+  nftAddress: string;
+  tokenId: string;
+  seller: string;
+  price: string;
+  priceEth: string;
   name: string;
   image: string;
   collectionName: string;
@@ -25,39 +26,20 @@ export default function MarketplacePage() {
   const marketAddress = getMarketAddress();
 
   useEffect(() => {
-    async function load() {
-      if (!marketAddress) {
-        setLoading(false);
-        return;
-      }
-
-      const listings = await getAllActiveListings();
-      if (listings.length === 0) {
-        setLoading(false);
-        return;
-      }
-
-      // Resolve metadata for each listing
-      const resolved = await Promise.all(
-        listings.map(async (listing) => {
-          const collection = getCollectionByAddress(listing.nftAddress);
-          const meta = await fetchTokenMetadata(listing.nftAddress, String(listing.tokenId));
-          return {
-            listing,
-            name: meta?.name || `#${listing.tokenId}`,
-            image: meta?.image || '',
-            collectionName: collection?.name || 'Unknown',
-            collectionSlug: collection?.slug || '',
-            aspectRatio: collection?.aspectRatio,
-            pixelArt: collection?.pixelArt,
-          };
-        }),
-      );
-
-      setCards(resolved.filter((c) => c.image));
+    if (!marketAddress) {
       setLoading(false);
+      return;
     }
-    load();
+
+    fetch('/api/marketplace')
+      .then((res) => res.json())
+      .then((data: ListingCard[]) => {
+        setCards(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
   }, [marketAddress]);
 
   return (
@@ -86,7 +68,7 @@ export default function MarketplacePage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {cards.map((card) => {
               const detailHref = card.collectionSlug
-                ? `/collections/${card.collectionSlug}/${card.listing.tokenId}`
+                ? `/collections/${card.collectionSlug}/${card.tokenId}`
                 : null;
               const cardContent = (
                 <>
@@ -102,7 +84,7 @@ export default function MarketplacePage() {
                       }}
                     />
                     <span className="absolute top-2 right-2 text-[10px] bg-purple-900/80 text-purple-300 px-1.5 py-0.5 rounded font-bold">
-                      {card.listing.priceEth} ETH
+                      {card.priceEth} ETH
                     </span>
                   </div>
                   <div className="p-2">
@@ -114,16 +96,16 @@ export default function MarketplacePage() {
 
               return (
                 <div
-                  key={`${card.listing.nftAddress}:${card.listing.tokenId}`}
+                  key={`${card.nftAddress}:${card.tokenId}`}
                   className="bg-zinc-950 border border-zinc-800 rounded overflow-hidden hover:border-zinc-600 transition-colors"
                 >
                   {detailHref ? <Link href={detailHref}>{cardContent}</Link> : cardContent}
                   <div className="px-2 pb-2">
                     <MarketBuyButton
-                      nftAddress={card.listing.nftAddress}
-                      tokenId={Number(card.listing.tokenId)}
-                      priceWei={card.listing.price}
-                      priceEth={card.listing.priceEth}
+                      nftAddress={card.nftAddress}
+                      tokenId={Number(card.tokenId)}
+                      priceWei={card.price}
+                      priceEth={card.priceEth}
                     />
                   </div>
                 </div>
