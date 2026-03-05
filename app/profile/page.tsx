@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAccount } from 'wagmi';
 import PieceCard from '@/components/PieceCard';
 import OwnedPieceCard from '@/components/OwnedPieceCard';
@@ -35,6 +35,7 @@ export default function ProfilePage() {
   const { address } = useAccount();
   const [sections, setSections] = useState<CollectionSection[]>([]);
   const [loadingExternal, setLoadingExternal] = useState(false);
+  const loadSectionsRequestRef = useRef(0);
   const [listingModal, setListingModal] = useState<{
     nftAddress: string;
     tokenId: number;
@@ -47,14 +48,21 @@ export default function ProfilePage() {
       )
     : [];
 
-  const loadSections = useCallback(() => {
+  const loadSections = useCallback(async () => {
+    const requestId = ++loadSectionsRequestRef.current;
+    const isStale = () => loadSectionsRequestRef.current !== requestId;
+
     if (!address) {
       setSections([]);
+      setLoadingExternal(false);
       return;
     }
 
     const externalCollections = collections.filter((c) => !c.native && c.onchain);
-    if (externalCollections.length === 0) return;
+    if (externalCollections.length === 0) {
+      setLoadingExternal(false);
+      return;
+    }
 
     setLoadingExternal(true);
 
@@ -71,12 +79,13 @@ export default function ProfilePage() {
       }))
     );
 
-    let completedCount = 0;
-    externalCollections.forEach(async (collection) => {
+    await Promise.all(externalCollections.map(async (collection) => {
       try {
         const tokenIds = await discoverOwnedTokens(collection.contractAddress, address);
+        if (isStale()) return;
 
         if (tokenIds.length === 0) {
+          if (isStale()) return;
           setSections((prev) =>
             prev.map((s) =>
               s.slug === collection.slug ? { ...s, loading: false } : s
@@ -92,6 +101,7 @@ export default function ProfilePage() {
             for (const r of results) {
               if (r) tokens.push(r);
             }
+            if (isStale()) return;
             const tokensSoFar = [...tokens];
             const stillLoading = i + METADATA_BATCH < tokenIds.length;
             setSections((prev) =>
@@ -110,6 +120,7 @@ export default function ProfilePage() {
               const listing = await getTokenListing(collection.contractAddress, token.tokenId);
               if (listing) listingsMap.set(token.tokenId, listing);
             }
+            if (isStale()) return;
             setSections((prev) =>
               prev.map((s) =>
                 s.slug === collection.slug ? { ...s, listings: listingsMap } : s
@@ -118,22 +129,25 @@ export default function ProfilePage() {
           }
         }
       } catch {
+        if (isStale()) return;
         setSections((prev) =>
           prev.map((s) =>
             s.slug === collection.slug ? { ...s, loading: false } : s
           )
         );
       }
+    }));
 
-      completedCount++;
-      if (completedCount === externalCollections.length) {
-        setLoadingExternal(false);
-      }
-    });
+    if (!isStale()) {
+      setLoadingExternal(false);
+    }
   }, [address]);
 
   useEffect(() => {
-    loadSections();
+    void loadSections();
+    return () => {
+      loadSectionsRequestRef.current += 1;
+    };
   }, [loadSections]);
 
   const nonEmptySections = sections.filter((s) => s.tokens.length > 0 || s.loading);

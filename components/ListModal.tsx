@@ -96,6 +96,12 @@ export default function ListModal({ nftAddress, tokenId, tokenName, onClose, onL
   function handleApprove() {
     setError(null);
     reset();
+
+    if (!marketAddress) {
+      setError('Marketplace not configured.');
+      return;
+    }
+
     setApprovalPending(true);
 
     const data = encodeFunctionData({
@@ -113,6 +119,11 @@ export default function ListModal({ nftAddress, tokenId, tokenName, onClose, onL
   function handleList() {
     setError(null);
     reset();
+
+    if (!marketAddress) {
+      setError('Marketplace not configured.');
+      return;
+    }
 
     const price = priceInput.trim();
     if (!price || isNaN(Number(price)) || Number(price) <= 0) {

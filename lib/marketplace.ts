@@ -1,6 +1,12 @@
 import { rpcCall } from './rpc';
+import { formatEther } from 'viem';
 
 const MARKET_ADDRESS = process.env.NEXT_PUBLIC_MARKET_CONTRACT || '';
+
+function formatEthDisplay(valueWei: bigint): string {
+  const [whole, fraction = ''] = formatEther(valueWei).split('.');
+  return `${whole}.${fraction.padEnd(4, '0').slice(0, 4)}`;
+}
 
 export interface MarketListing {
   nftAddress: string;
@@ -44,7 +50,7 @@ export async function getTokenListing(
       tokenId,
       seller,
       price: priceWei.toString(),
-      priceEth: (Number(priceWei) / 1e18).toFixed(4),
+      priceEth: formatEthDisplay(priceWei),
     };
   } catch {
     return null;
