@@ -12,28 +12,49 @@ export default function ConnectButton() {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
-  // Close dropdown on outside click
+  // Close dropdown on outside click/touch
   useEffect(() => {
-    function handler(e: MouseEvent) {
+    if (!open) return;
+    function handler(e: MouseEvent | TouchEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     }
     document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
+    document.addEventListener('touchstart', handler);
+    return () => {
+      document.removeEventListener('mousedown', handler);
+      document.removeEventListener('touchstart', handler);
+    };
+  }, [open]);
+
+  // Pick best connector: prefer injected (browser wallet), fall back to WalletConnect
+  function autoConnect() {
+    const injected = connectors.find(
+      (c) => c.type === 'injected' && typeof window !== 'undefined' && window.ethereum,
+    );
+    const wc = connectors.find((c) => c.type === 'walletConnect');
+    const connector = injected ?? wc ?? connectors[0];
+    if (connector) connect({ connector });
+  }
+
+  // Friendly connector names
+  function connectorLabel(name: string): string {
+    if (name === 'Injected') return 'Browser Wallet';
+    return name;
+  }
 
   // Wrong chain
   if (address && chain?.id !== base.id) {
     return (
       <button
         onClick={() => switchChain({ chainId: base.id })}
-        className="rounded border border-yellow-700 bg-yellow-950 text-yellow-300 px-3 py-1.5 text-xs font-bold transition-colors hover:bg-yellow-900 cursor-pointer"
+        className="rounded border border-yellow-700 bg-yellow-950 text-yellow-300 px-3 py-1.5 text-xs font-bold transition-colors hover:bg-yellow-900 cursor-pointer whitespace-nowrap"
       >
         Switch to Base
       </button>
     );
   }
 
-  // Connected
+  // Connected — address button with disconnect dropdown
   if (address) {
     return (
       <div className="relative" ref={ref}>
@@ -44,7 +65,7 @@ export default function ConnectButton() {
           {address.slice(0, 6)}…{address.slice(-4)}
         </button>
         {open && (
-          <div className="absolute right-0 mt-1 w-40 rounded border border-zinc-700 bg-zinc-900 py-1 z-50 shadow-lg">
+          <div className="absolute right-0 mt-1 w-40 rounded border border-zinc-700 bg-zinc-900 py-1 z-[100] shadow-lg">
             <button
               onClick={() => { disconnect(); setOpen(false); }}
               className="block w-full px-3 py-2 text-left text-xs text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors cursor-pointer"
@@ -57,29 +78,14 @@ export default function ConnectButton() {
     );
   }
 
-  // Not connected — show connector picker
+  // Not connected — single "Connect" button, auto-picks best connector
   return (
-    <div className="relative" ref={ref}>
-      <button
-        onClick={() => setOpen(!open)}
-        disabled={isConnecting}
-        className="rounded bg-purple-700 hover:bg-purple-600 disabled:bg-zinc-800 disabled:text-zinc-500 text-white px-3 py-1.5 text-xs font-bold transition-colors cursor-pointer disabled:cursor-not-allowed"
-      >
-        {isConnecting ? 'Connecting…' : 'Connect'}
-      </button>
-      {open && (
-        <div className="absolute right-0 mt-1 w-48 rounded border border-zinc-700 bg-zinc-900 py-1 z-50 shadow-lg">
-          {connectors.map((connector) => (
-            <button
-              key={connector.uid}
-              onClick={() => { connect({ connector }); setOpen(false); }}
-              className="block w-full px-3 py-2 text-left text-xs text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors cursor-pointer"
-            >
-              {connector.name}
-            </button>
-          ))}
-        </div>
-      )}
-    </div>
+    <button
+      onClick={autoConnect}
+      disabled={isConnecting}
+      className="rounded bg-purple-700 hover:bg-purple-600 disabled:bg-zinc-800 disabled:text-zinc-500 text-white px-3 py-1.5 text-xs font-bold transition-colors cursor-pointer disabled:cursor-not-allowed whitespace-nowrap"
+    >
+      {isConnecting ? 'Connecting…' : 'Connect'}
+    </button>
   );
 }
