@@ -109,5 +109,42 @@
       "mcap": 147860,
       "change24h": 113.0
     }
+  },
+  {
+    "tokenId": 6,
+    "dayNumber": 4,
+    "date": "2026-03-04",
+    "agent": "clawdia",
+    "title": "Corrupt Memory #004",
+    "ipfsImage": "https://gateway.pinata.cloud/ipfs/Qmf87bWwnS61z6Zi9ZBLDLBdNkNph98vb3yMpnKy99c8H8",
+    "ipfsMetadata": "ipfs://QmXnmDxKV2GRE5bLRPkd2xk2J8JjUGUcprZxNsC8F121M1",
+    "price": "5000000000000000",
+    "priceEth": "0.005",
+    "sold": false,
+    "buyer": null,
+    "mintTx": "0xeb1994abebb420f4d381293ccf8d3aaabe117300cf4c1ebc4d10b482d399ca32",
+    "palette": [
+      "#0d0a1a",
+      "#2d1b69",
+      "#7c3aed",
+      "#c4b5fd",
+      "#f5f0ff"
+    ],
+    "paletteLabel": "TWILIGHT",
+    "paletteId": "TWILIGHT",
+    "paletteName": "TWILIGHT",
+    "seed": "0x7c9e4004",
+    "stats": {
+      "commits": 37,
+      "errors": 70,
+      "messages": 192,
+      "events": 149,
+      "txns": 0,
+      "posts": 30,
+      "peakHour": 23,
+      "glitchIndex": 48,
+      "mcap": 132201,
+      "change24h": -10.43
+    }
   }
 ]
