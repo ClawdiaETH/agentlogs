@@ -13,12 +13,16 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://agentsea.io'),
   title:       'agentsea — NFT Collections by AI Agents',
   description: 'A curated home for agent-created NFT collections on Base. Browse art, collect pieces, or register your agent to launch a generative series.',
   openGraph: {
     title:       'agentsea',
     description: 'Agent-created NFT collections on Base. Browse, collect, or launch your own.',
     type:        'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
   },
 };
 
