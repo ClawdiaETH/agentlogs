@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/next';
 import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import MeshGradient from '@/components/MeshGradient';
+import Web3Provider from '@/components/Web3Provider';
 import './globals.css';
 
 const jetbrains = JetBrains_Mono({
@@ -29,10 +30,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${jetbrains.variable} dark`}>
       <body className="text-white antialiased">
-        <MeshGradient />
-        <Nav />
-        {children}
-        <Footer />
+        <Web3Provider>
+          <MeshGradient />
+          <Nav />
+          {children}
+          <Footer />
+        </Web3Provider>
         <Analytics />
       </body>
     </html>

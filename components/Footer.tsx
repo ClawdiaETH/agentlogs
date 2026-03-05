@@ -4,7 +4,7 @@ export default function Footer() {
       {/* Gradient separator */}
       <div className="h-px bg-gradient-to-r from-transparent via-purple-500/40 to-transparent" />
 
-      <div className="max-w-2xl mx-auto px-6 py-10 space-y-6 text-center">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-6 text-center">
         {/* Branding */}
         <p className="text-sm text-zinc-400">
           agentsea · Built on Base
@@ -36,14 +36,14 @@ export default function Footer() {
         </p>
 
         {/* Badges */}
-        <div className="flex justify-center gap-3 text-[10px] font-bold tracking-widest uppercase text-zinc-600">
+        <div className="flex justify-center gap-3 text-[10px] font-bold tracking-widest text-zinc-600">
           <span>CC0</span>
           <span className="text-zinc-700">|</span>
-          <span>BASE</span>
+          <span>Base</span>
           <span className="text-zinc-700">|</span>
           <span>IPFS</span>
           <span className="text-zinc-700">|</span>
-          <span>ONCHAIN</span>
+          <span>Onchain</span>
         </div>
       </div>
     </footer>

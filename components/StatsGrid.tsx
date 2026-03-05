@@ -22,7 +22,7 @@ export default function StatsGrid({ stats, palette, paletteLabel }: StatsGridPro
 
   return (
     <div className="border border-zinc-800 rounded bg-zinc-950 p-4 space-y-3">
-      <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {entries.map(([key, value]) => (
           <div key={key}>
             <p className="text-[10px] text-zinc-600 uppercase tracking-wider">{key.replace(/([A-Z])/g, ' $1')}</p>

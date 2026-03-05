@@ -167,7 +167,7 @@ export default function CollectionItems({ contractAddress, collectionName, aspec
       )}
 
       {loading && (
-        <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           {Array.from({ length: PAGE_SIZE }).map((_, i) => (
             <div key={i} className="bg-zinc-900 rounded border border-zinc-800 animate-pulse" style={{ aspectRatio: aspectRatio || '1/1' }} />
           ))}
@@ -175,7 +175,7 @@ export default function CollectionItems({ contractAddress, collectionName, aspec
       )}
 
       {!loading && items.length > 0 && (
-        <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
           {items.map((item) => (
             <div key={item.tokenId} className="bg-zinc-950 border border-zinc-800 rounded overflow-hidden">
               {/* eslint-disable-next-line @next/next/no-img-element */}

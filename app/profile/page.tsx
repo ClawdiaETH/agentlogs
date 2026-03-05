@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useAccount } from 'wagmi';
 import PieceCard from '@/components/PieceCard';
 import registry from '../../data/registry.json';
 import collections from '../../data/collections.json';
@@ -38,30 +39,9 @@ interface CollectionBalance {
 }
 
 export default function ProfilePage() {
-  const [address, setAddress] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [connecting, setConnecting] = useState(false);
+  const { address } = useAccount();
   const [collectionBalances, setCollectionBalances] = useState<CollectionBalance[]>([]);
   const [loadingBalances, setLoadingBalances] = useState(false);
-
-  async function connect() {
-    if (!window.ethereum) {
-      setError('No wallet detected. Install MetaMask or another browser wallet.');
-      return;
-    }
-    setConnecting(true);
-    setError(null);
-    try {
-      const accounts = await window.ethereum.request({
-        method: 'eth_requestAccounts',
-      }) as string[];
-      if (accounts[0]) setAddress(accounts[0]);
-    } catch {
-      setError('Wallet connection declined.');
-    } finally {
-      setConnecting(false);
-    }
-  }
 
   useEffect(() => {
     if (!address) return;
@@ -103,24 +83,14 @@ export default function ProfilePage() {
 
   return (
     <main className="min-h-screen text-white font-mono">
-      <div className="max-w-2xl mx-auto px-6 py-16">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-16">
         <h1 className="text-3xl font-bold tracking-tight mb-2">Profile</h1>
 
         {!address && (
           <div className="mt-8">
-            <p className="text-sm text-zinc-500 mb-4">
-              Connect your wallet to see your collection.
+            <p className="text-sm text-zinc-500">
+              Connect your wallet using the button in the navigation bar to see your collection.
             </p>
-            <button
-              onClick={connect}
-              disabled={connecting}
-              className="rounded bg-purple-700 hover:bg-purple-600 disabled:bg-zinc-800 disabled:text-zinc-500 text-white font-bold px-6 py-3 text-sm transition-colors cursor-pointer disabled:cursor-not-allowed"
-            >
-              {connecting ? 'Connecting...' : 'Connect Wallet'}
-            </button>
-            {error && (
-              <p className="text-sm text-red-400 mt-3">{error}</p>
-            )}
           </div>
         )}
 

@@ -67,7 +67,7 @@ export default function RegisterPage() {
   if (status === 'success' && result) {
     return (
       <main className="min-h-screen text-white font-mono">
-        <div className="max-w-lg mx-auto px-6 py-16 text-center space-y-6">
+        <div className="max-w-lg mx-auto px-4 sm:px-6 py-16 text-center space-y-6">
           <h1 className="text-2xl font-bold">Agent registered</h1>
           <p className="text-zinc-400">Your storefront is live:</p>
           <Link
@@ -89,7 +89,7 @@ export default function RegisterPage() {
 
   return (
     <main className="min-h-screen text-white font-mono">
-      <div className="max-w-lg mx-auto px-6 py-16">
+      <div className="max-w-lg mx-auto px-4 sm:px-6 py-16">
         <h1 className="text-2xl font-bold mb-2">Register agent</h1>
         <p className="text-zinc-500 text-sm mb-6">
           Deploy your NFT contract on Base, then register your agent here.
@@ -187,7 +187,7 @@ Content-Type: application/json
             <input className={inputClass} value={form.nftContract} onChange={e => update('nftContract', e.target.value)} placeholder="0x..." required pattern="^0x[0-9a-fA-F]{40}$" />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className={labelClass}>Start Price (wei) *</label>
               <input className={inputClass} value={form.startPrice} onChange={e => update('startPrice', e.target.value)} required />
@@ -215,7 +215,7 @@ Content-Type: application/json
             <input className={inputClass} value={form.description} onChange={e => update('description', e.target.value)} placeholder="One-liner about your series" />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className={labelClass}>Token Address</label>
               <input className={inputClass} value={form.tokenAddress} onChange={e => update('tokenAddress', e.target.value)} placeholder="0x... (ERC-20)" />
@@ -226,7 +226,7 @@ Content-Type: application/json
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className={labelClass}>GitHub Username</label>
               <input className={inputClass} value={form.githubUsername} onChange={e => update('githubUsername', e.target.value)} placeholder="e.g. ClawdiaETH" />

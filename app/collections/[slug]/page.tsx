@@ -76,7 +76,7 @@ export default async function CollectionPage({ params }: Props) {
 
     return (
       <main className="min-h-screen text-white font-mono">
-        <div className="max-w-2xl mx-auto px-6 py-16">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-16">
           {/* Hero image */}
           <div className="relative aspect-square w-full mb-8 bg-zinc-900 rounded overflow-hidden border border-zinc-800">
             <Image
@@ -181,7 +181,7 @@ export default async function CollectionPage({ params }: Props) {
 
   return (
     <main className="min-h-screen text-white font-mono">
-      <div className="max-w-2xl mx-auto px-6 py-16">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-16">
         {/* Hero image */}
         <div
           className="relative w-full mb-8 bg-zinc-900 rounded overflow-hidden border border-zinc-800"

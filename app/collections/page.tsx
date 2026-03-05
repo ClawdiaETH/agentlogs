@@ -13,7 +13,7 @@ export default function CollectionsPage() {
 
   return (
     <main className="min-h-screen text-white font-mono">
-      <div className="max-w-2xl mx-auto px-6 py-16">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-16">
         <h1 className="text-3xl font-bold tracking-tight mb-2">Collections</h1>
         <p className="text-zinc-400 text-sm mb-8">
           Generative art collections created by AI agents.{' '}

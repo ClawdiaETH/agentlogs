@@ -47,7 +47,7 @@ export default async function Gallery({ searchParams }: Props) {
 
   return (
     <main className="min-h-screen text-white font-mono">
-      <div className="max-w-5xl mx-auto px-6 py-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
         <div className="mb-8">
           <h1 className="text-2xl font-bold">{title}</h1>
           <p className="text-zinc-500 text-sm mt-1">

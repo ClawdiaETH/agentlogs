@@ -2,7 +2,7 @@ import { assembleDayLog } from './assembler';
 import { renderImage } from './renderer';
 import { uploadImage, uploadMetadata } from './pinata';
 import { mintNFT } from './contract';
-import { hasDayNumber, addEntry } from './kv-registry';
+import { hasDayNumber, addEntry, getRegistry } from './kv-registry';
 import { commitRegistry } from './github-commit';
 import type { AgentConfig } from './agents';
 import type { DayLog } from './renderer/types';
@@ -164,7 +164,7 @@ export async function runPipeline(secrets: PipelineSecrets): Promise<PipelineRes
   await addEntry(entry); // no-op when KV not configured
 
   if (!process.env.KV_REST_API_URL && secrets.githubToken) {
-    const current = await import('./kv-registry').then((m) => m.getRegistry());
+    const current = await getRegistry();
     await commitRegistry(
       JSON.stringify([...current, entry], null, 2),
       `mint: ${seriesTitle} Day ${dayNumber} — ${dayLog.paletteLabel}`,

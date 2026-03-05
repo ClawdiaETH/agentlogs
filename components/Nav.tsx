@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import ConnectButton from '@/components/ConnectButton';
 
 const links = [
   {
@@ -54,38 +56,92 @@ const links = [
 
 export default function Nav() {
   const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <nav className="border-b border-zinc-800 px-6 py-4 flex items-center justify-between">
-      <Link
-        href="/"
-        className="flex items-center gap-2 text-zinc-400 text-sm tracking-widest uppercase hover:text-white transition-colors"
-      >
-        <Image
-          src="/logo.png"
-          alt=""
-          width={24}
-          height={24}
-          className="rounded"
-        />
-        agentsea
-      </Link>
-      <div className="flex items-center gap-5">
-        {links.map(({ href, label, icon }) => (
-          <Link
-            key={href}
-            href={href}
-            className={`flex items-center gap-1.5 text-sm transition-colors ${
-              pathname.startsWith(href)
-                ? 'text-white'
-                : 'text-zinc-500 hover:text-zinc-300'
-            }`}
+    <nav className="relative border-b border-zinc-800 px-4 sm:px-6 py-4">
+      <div className="flex items-center justify-between">
+        <Link
+          href="/"
+          className="flex items-center gap-2 text-zinc-400 text-sm tracking-widest uppercase hover:text-white transition-colors"
+        >
+          <Image
+            src="/logo.png"
+            alt=""
+            width={24}
+            height={24}
+            className="rounded"
+          />
+          agentsea
+        </Link>
+
+        {/* Desktop links */}
+        <div className="hidden sm:flex items-center gap-5">
+          {links.map(({ href, label, icon }) => (
+            <Link
+              key={href}
+              href={href}
+              className={`flex items-center gap-1.5 text-sm transition-colors ${
+                pathname.startsWith(href)
+                  ? 'text-white'
+                  : 'text-zinc-500 hover:text-zinc-300'
+              }`}
+            >
+              {icon}
+              {label}
+            </Link>
+          ))}
+          <ConnectButton />
+        </div>
+
+        {/* Mobile: connect + hamburger */}
+        <div className="flex items-center gap-3 sm:hidden">
+          <ConnectButton />
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="text-zinc-400 hover:text-white transition-colors cursor-pointer"
+            aria-label="Toggle menu"
           >
-            {icon}
-            {label}
-          </Link>
-        ))}
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              {menuOpen ? (
+                <>
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </>
+              ) : (
+                <>
+                  <line x1="3" y1="6" x2="21" y2="6" />
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <line x1="3" y1="18" x2="21" y2="18" />
+                </>
+              )}
+            </svg>
+          </button>
+        </div>
       </div>
+
+      {/* Mobile slide-down menu */}
+      {menuOpen && (
+        <div className="absolute left-0 right-0 top-full z-50 border-b border-zinc-800 bg-zinc-950/95 backdrop-blur px-4 py-4 sm:hidden">
+          <div className="flex flex-col gap-3">
+            {links.map(({ href, label, icon }) => (
+              <Link
+                key={href}
+                href={href}
+                onClick={() => setMenuOpen(false)}
+                className={`flex items-center gap-2 text-sm py-1 transition-colors ${
+                  pathname.startsWith(href)
+                    ? 'text-white'
+                    : 'text-zinc-500 hover:text-zinc-300'
+                }`}
+              >
+                {icon}
+                {label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
