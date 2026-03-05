@@ -27,6 +27,13 @@ async function resolveTokenURI(hex: string): Promise<{ name: string; image: stri
       return { name: json.name || '', image: json.image || '' };
     }
 
+    // Handle data:application/json, (non-base64, URL-encoded or plain)
+    if (uri.startsWith('data:application/json,')) {
+      const raw = decodeURIComponent(uri.slice('data:application/json,'.length));
+      const json = JSON.parse(raw);
+      return { name: json.name || '', image: json.image || '' };
+    }
+
     // Handle raw JSON
     if (uri.startsWith('{')) {
       const json = JSON.parse(uri);
@@ -57,9 +64,10 @@ interface CollectionItemsProps {
   contractAddress: string;
   collectionName: string;
   aspectRatio?: string;
+  knownSupply?: number | null;
 }
 
-export default function CollectionItems({ contractAddress, collectionName, aspectRatio }: CollectionItemsProps) {
+export default function CollectionItems({ contractAddress, collectionName, aspectRatio, knownSupply }: CollectionItemsProps) {
   const [totalSupply, setTotalSupply] = useState<number | null>(null);
   const [items, setItems] = useState<TokenItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -67,42 +75,42 @@ export default function CollectionItems({ contractAddress, collectionName, aspec
   const [startTokenId, setStartTokenId] = useState(1);
   const [nextStartId, setNextStartId] = useState(1);
 
-  // Fetch total supply on mount
+  // Fetch total supply on mount (fall back to knownSupply if totalSupply() reverts)
   useEffect(() => {
-    rpcCall(contractAddress, '0x18160ddd')
-      .then(async (result) => {
+    async function init() {
+      let supply = 0;
+      try {
+        const result = await rpcCall(contractAddress, '0x18160ddd');
         if (result && result !== '0x') {
-          const supply = parseInt(result, 16);
-          let firstTokenId = 1;
-          if (supply > 0) {
-            try {
-              const tokenZero = await rpcCall(contractAddress, `0xc87b56dd${'0'.padStart(64, '0')}`);
-              if (tokenZero && tokenZero !== '0x') {
-                firstTokenId = 0;
-              }
-            } catch {}
-          }
-          setItems([]);
-          setStartTokenId(firstTokenId);
-          setNextStartId(firstTokenId);
-          setTotalSupply(supply);
-          setLoading(supply > 0);
-          return;
+          supply = parseInt(result, 16);
         }
-        setItems([]);
-        setStartTokenId(1);
-        setNextStartId(1);
-        setTotalSupply(0);
-        setLoading(false);
-      })
-      .catch(() => {
-        setItems([]);
-        setStartTokenId(1);
-        setNextStartId(1);
-        setTotalSupply(0);
-        setLoading(false);
-      });
-  }, [contractAddress]);
+      } catch {
+        // totalSupply() not implemented or reverted
+      }
+
+      // Fall back to knownSupply from collections.json
+      if (supply === 0 && knownSupply && knownSupply > 0) {
+        supply = knownSupply;
+      }
+
+      let firstTokenId = 1;
+      if (supply > 0) {
+        try {
+          const tokenZero = await rpcCall(contractAddress, `0xc87b56dd${'0'.padStart(64, '0')}`);
+          if (tokenZero && tokenZero !== '0x') {
+            firstTokenId = 0;
+          }
+        } catch {}
+      }
+
+      setItems([]);
+      setStartTokenId(firstTokenId);
+      setNextStartId(firstTokenId);
+      setTotalSupply(supply);
+      setLoading(supply > 0);
+    }
+    init();
+  }, [contractAddress, knownSupply]);
 
   const loadItems = useCallback(async (startId: number, count: number) => {
     const ids: number[] = [];
