@@ -1,81 +1,158 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAccount } from 'wagmi';
 import PieceCard from '@/components/PieceCard';
+import OwnedPieceCard from '@/components/OwnedPieceCard';
+import ListModal from '@/components/ListModal';
+import { discoverOwnedTokens } from '@/lib/token-discovery';
+import { fetchTokenMetadata } from '@/lib/token-metadata';
+import { getTokenListing, getMarketAddress } from '@/lib/marketplace';
+import type { MarketListing } from '@/lib/marketplace';
 import registry from '../../data/registry.json';
 import collections from '../../data/collections.json';
 
-const BASE_RPC = process.env.NEXT_PUBLIC_BASE_RPC || 'https://mainnet.base.org';
-// balanceOf(address) selector
-const BALANCE_OF_SELECTOR = '0x70a08231';
-
-async function getBalance(contract: string, owner: string): Promise<number> {
-  const paddedAddr = owner.slice(2).toLowerCase().padStart(64, '0');
-  const res = await fetch(BASE_RPC, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      jsonrpc: '2.0',
-      method: 'eth_call',
-      params: [{ to: contract, data: `${BALANCE_OF_SELECTOR}${paddedAddr}` }, 'latest'],
-      id: 1,
-    }),
-  });
-  const data = await res.json();
-  if (!data.result || data.result === '0x') return 0;
-  return parseInt(data.result, 16);
-}
-
-interface CollectionBalance {
-  slug: string;
+interface OwnedToken {
+  tokenId: string;
   name: string;
   image: string;
-  balance: number;
-  native: boolean;
-  aspectRatio?: string;
 }
+
+interface CollectionSection {
+  slug: string;
+  name: string;
+  contractAddress: string;
+  aspectRatio?: string;
+  pixelArt?: boolean;
+  tokens: OwnedToken[];
+  listings: Map<string, MarketListing<string>>;
+  loading: boolean;
+}
+
+const METADATA_BATCH = 4;
 
 export default function ProfilePage() {
   const { address } = useAccount();
-  const [collectionBalances, setCollectionBalances] = useState<CollectionBalance[]>([]);
-  const [loadingBalances, setLoadingBalances] = useState(false);
+  const [sections, setSections] = useState<CollectionSection[]>([]);
+  const [loadingExternal, setLoadingExternal] = useState(false);
+  const loadSectionsRequestRef = useRef(0);
+  const [listingModal, setListingModal] = useState<{
+    nftAddress: string;
+    tokenId: string;
+    tokenName: string;
+  } | null>(null);
 
-  useEffect(() => {
-    if (!address) return;
-    setLoadingBalances(true);
-    Promise.all(
-      collections.map(async (c) => {
-        const balance = await getBalance(c.contractAddress, address);
-        return {
-          slug: c.slug,
-          name: c.name,
-          image: c.image,
-          balance,
-          native: c.native,
-          aspectRatio: c.aspectRatio,
-        };
-      })
-    ).then((results) => {
-      setCollectionBalances(results);
-      setLoadingBalances(false);
-    });
-  }, [address]);
-
-  // Registry pieces (Corrupt Memory with full metadata)
   const ownedPieces = address
     ? registry.filter(
         (p) => p.buyer && p.buyer.toLowerCase() === address.toLowerCase()
       )
     : [];
 
-  // Collection holdings (onchain balanceOf > 0, excluding native ones shown via registry)
-  const externalHoldings = collectionBalances.filter((c) => c.balance > 0 && !c.native);
-  const nativeHoldings = collectionBalances.filter((c) => c.balance > 0 && c.native);
+  const loadSections = useCallback(async () => {
+    const requestId = ++loadSectionsRequestRef.current;
+    const isStale = () => loadSectionsRequestRef.current !== requestId;
 
-  const hasAnything = ownedPieces.length > 0 || externalHoldings.length > 0 || nativeHoldings.some(c => c.balance > 0);
+    if (!address) {
+      setSections([]);
+      setLoadingExternal(false);
+      return;
+    }
+
+    const externalCollections = collections.filter((c) => !c.native && c.onchain);
+    if (externalCollections.length === 0) {
+      setLoadingExternal(false);
+      return;
+    }
+
+    setLoadingExternal(true);
+
+    setSections(
+      externalCollections.map((c) => ({
+        slug: c.slug,
+        name: c.name,
+        contractAddress: c.contractAddress,
+        aspectRatio: c.aspectRatio,
+        pixelArt: c.pixelArt,
+        tokens: [],
+        listings: new Map<string, MarketListing<string>>(),
+        loading: true,
+      }))
+    );
+
+    await Promise.all(externalCollections.map(async (collection) => {
+      try {
+        const tokenIds = await discoverOwnedTokens(collection.contractAddress, address);
+        if (isStale()) return;
+
+        if (tokenIds.length === 0) {
+          if (isStale()) return;
+          setSections((prev) =>
+            prev.map((s) =>
+              s.slug === collection.slug ? { ...s, loading: false } : s
+            )
+          );
+        } else {
+          const tokens: OwnedToken[] = [];
+          for (let i = 0; i < tokenIds.length; i += METADATA_BATCH) {
+            const batch = tokenIds.slice(i, i + METADATA_BATCH);
+            const results = await Promise.all(
+              batch.map((id) => fetchTokenMetadata(collection.contractAddress, id))
+            );
+            for (const r of results) {
+              if (r) tokens.push(r);
+            }
+            if (isStale()) return;
+            const tokensSoFar = [...tokens];
+            const stillLoading = i + METADATA_BATCH < tokenIds.length;
+            setSections((prev) =>
+              prev.map((s) =>
+                s.slug === collection.slug
+                  ? { ...s, tokens: tokensSoFar, loading: stillLoading }
+                  : s
+              )
+            );
+          }
+
+          // Check marketplace listings for owned tokens
+          if (getMarketAddress()) {
+            const listingsMap = new Map<string, MarketListing<string>>();
+            for (const token of tokens) {
+              const listing = await getTokenListing(collection.contractAddress, token.tokenId);
+              if (listing) listingsMap.set(token.tokenId, listing);
+            }
+            if (isStale()) return;
+            setSections((prev) =>
+              prev.map((s) =>
+                s.slug === collection.slug ? { ...s, listings: listingsMap } : s
+              )
+            );
+          }
+        }
+      } catch {
+        if (isStale()) return;
+        setSections((prev) =>
+          prev.map((s) =>
+            s.slug === collection.slug ? { ...s, loading: false } : s
+          )
+        );
+      }
+    }));
+
+    if (!isStale()) {
+      setLoadingExternal(false);
+    }
+  }, [address]);
+
+  useEffect(() => {
+    void loadSections();
+    return () => {
+      loadSectionsRequestRef.current += 1;
+    };
+  }, [loadSections]);
+
+  const nonEmptySections = sections.filter((s) => s.tokens.length > 0 || s.loading);
+  const hasAnything = ownedPieces.length > 0 || nonEmptySections.length > 0;
+  const allDoneLoading = !loadingExternal && sections.every((s) => !s.loading);
 
   const truncated = address
     ? `${address.slice(0, 6)}...${address.slice(-4)}`
@@ -98,11 +175,11 @@ export default function ProfilePage() {
           <>
             <p className="text-sm text-zinc-500 mb-8 font-mono">{truncated}</p>
 
-            {loadingBalances && (
+            {loadingExternal && !hasAnything && (
               <p className="text-sm text-zinc-500">Loading your NFTs...</p>
             )}
 
-            {!loadingBalances && !hasAnything && (
+            {allDoneLoading && !hasAnything && (
               <p className="text-sm text-zinc-500">
                 No pieces yet.{' '}
                 <a href="/collections" className="text-purple-400 hover:text-purple-300 transition-colors">
@@ -115,7 +192,8 @@ export default function ProfilePage() {
             {/* Native series pieces (Corrupt Memory — full detail from registry) */}
             {ownedPieces.length > 0 && (
               <div className="mb-12">
-                <h2 className="text-lg font-bold mb-4">Corrupt Memory</h2>
+                <h2 className="text-lg font-bold mb-1">Corrupt Memory</h2>
+                <p className="text-xs text-zinc-500 mb-4">{ownedPieces.length} piece{ownedPieces.length !== 1 ? 's' : ''}</p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {ownedPieces.map((p) => (
                     <PieceCard
@@ -133,45 +211,86 @@ export default function ProfilePage() {
               </div>
             )}
 
-            {/* Collection holdings (onchain balanceOf) */}
-            {externalHoldings.length > 0 && (
-              <div>
-                <h2 className="text-lg font-bold mb-4">Collections</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                  {externalHoldings.map((c) => (
-                    <Link
-                      key={c.slug}
-                      href={`/collections/${c.slug}`}
-                      className="bg-zinc-950 border border-zinc-800 rounded overflow-hidden hover:border-zinc-600 transition-colors group block"
-                    >
-                      <div className="relative bg-zinc-900" style={{ aspectRatio: c.aspectRatio || '1/1' }}>
-                        <Image
-                          src={c.image}
-                          alt={c.name}
-                          fill
-                          className="object-cover"
-                          unoptimized
+            {/* External collection sections — individual pieces with marketplace */}
+            {nonEmptySections.map((section) => (
+              <div key={section.slug} className="mb-12">
+                <h2 className="text-lg font-bold mb-1">{section.name}</h2>
+                <p className="text-xs text-zinc-500 mb-4">
+                  {section.loading
+                    ? 'Loading...'
+                    : `${section.tokens.length} piece${section.tokens.length !== 1 ? 's' : ''}`}
+                </p>
+
+                {section.loading && section.tokens.length === 0 && (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                      <div
+                        key={i}
+                        className="bg-zinc-900 rounded border border-zinc-800 animate-pulse"
+                        style={{ aspectRatio: section.aspectRatio || '1/1' }}
+                      />
+                    ))}
+                  </div>
+                )}
+
+                {section.tokens.length > 0 && (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    {section.tokens.map((token) => {
+                      const listing = section.listings.get(token.tokenId);
+                      return (
+                        <OwnedPieceCard
+                          key={token.tokenId}
+                          tokenId={token.tokenId}
+                          name={token.name}
+                          image={token.image}
+                          collectionName={section.name}
+                          collectionSlug={section.slug}
+                          contractAddress={section.contractAddress}
+                          aspectRatio={section.aspectRatio}
+                          pixelArt={section.pixelArt}
+                          isOwner
+                          listingPrice={listing?.priceEth}
+                          onListClick={() =>
+                            setListingModal({
+                              nftAddress: section.contractAddress,
+                              tokenId: token.tokenId,
+                              tokenName: token.name || `${section.name} #${token.tokenId}`,
+                            })
+                          }
+                          onDelisted={() => {
+                            setSections((prev) =>
+                              prev.map((s) => {
+                                if (s.slug !== section.slug || !s.listings.has(token.tokenId)) return s;
+                                const nextListings = new Map(s.listings);
+                                nextListings.delete(token.tokenId);
+                                return { ...s, listings: nextListings };
+                              })
+                            );
+                          }}
                         />
-                        <span className="absolute top-2 right-2 text-[10px] bg-emerald-900/80 text-emerald-300 px-1.5 py-0.5 rounded font-bold tracking-wider">
-                          {c.balance} owned
-                        </span>
-                      </div>
-                      <div className="p-3">
-                        <h3 className="text-sm font-bold text-zinc-200 group-hover:text-white transition-colors truncate">
-                          {c.name}
-                        </h3>
-                        <p className="text-xs text-zinc-500 mt-1">
-                          {c.balance} piece{c.balance !== 1 ? 's' : ''}
-                        </p>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
-            )}
+            ))}
           </>
         )}
       </div>
+
+      {/* List Modal */}
+      {listingModal && (
+        <ListModal
+          nftAddress={listingModal.nftAddress}
+          tokenId={listingModal.tokenId}
+          tokenName={listingModal.tokenName}
+          onClose={() => setListingModal(null)}
+          onListed={() => {
+            setListingModal(null);
+            loadSections(); // Refresh to show updated listing status
+          }}
+        />
+      )}
     </main>
   );
 }

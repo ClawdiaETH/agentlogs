@@ -2,57 +2,13 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { rpcCall } from '@/lib/rpc';
+import { resolveTokenURI } from '@/lib/token-metadata';
+import { getTokenListing, getMarketAddress } from '@/lib/marketplace';
+import type { MarketListing } from '@/lib/marketplace';
+import MarketBuyButton from './MarketBuyButton';
 
 const PAGE_SIZE = 12;
 const BATCH_SIZE = 6;
-
-async function resolveTokenURI(hex: string): Promise<{ name: string; image: string } | null> {
-  if (!hex || hex === '0x') return null;
-  try {
-    // Remove 0x prefix, skip first 64 chars (offset pointer) and next 64 chars (string length)
-    const stripped = hex.slice(2);
-    const offset = parseInt(stripped.slice(0, 64), 16) * 2;
-    const length = parseInt(stripped.slice(offset, offset + 64), 16);
-    const hexStr = stripped.slice(offset + 64, offset + 64 + length * 2);
-
-    // Convert hex to string
-    let uri = '';
-    for (let i = 0; i < hexStr.length; i += 2) {
-      uri += String.fromCharCode(parseInt(hexStr.slice(i, i + 2), 16));
-    }
-
-    // Handle data:application/json;base64, prefix
-    if (uri.startsWith('data:application/json;base64,')) {
-      const json = JSON.parse(atob(uri.slice('data:application/json;base64,'.length)));
-      return { name: json.name || '', image: json.image || '' };
-    }
-
-    // Handle data:application/json, (non-base64, URL-encoded or plain)
-    if (uri.startsWith('data:application/json,')) {
-      const raw = decodeURIComponent(uri.slice('data:application/json,'.length));
-      const json = JSON.parse(raw);
-      return { name: json.name || '', image: json.image || '' };
-    }
-
-    // Handle raw JSON
-    if (uri.startsWith('{')) {
-      const json = JSON.parse(uri);
-      return { name: json.name || '', image: json.image || '' };
-    }
-
-    // Handle HTTP(S) URLs — fetch the metadata JSON
-    if (uri.startsWith('http://') || uri.startsWith('https://')) {
-      const res = await fetch(uri);
-      if (!res.ok) return null;
-      const json = await res.json();
-      return { name: json.name || '', image: json.image || '' };
-    }
-
-    return null;
-  } catch {
-    return null;
-  }
-}
 
 interface TokenItem {
   tokenId: number;
@@ -71,6 +27,7 @@ interface CollectionItemsProps {
 export default function CollectionItems({ contractAddress, collectionName, aspectRatio, knownSupply, pixelArt }: CollectionItemsProps) {
   const [totalSupply, setTotalSupply] = useState<number | null>(null);
   const [items, setItems] = useState<TokenItem[]>([]);
+  const [listings, setListings] = useState<Map<number, MarketListing>>(new Map());
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [startTokenId, setStartTokenId] = useState(1);
@@ -152,6 +109,26 @@ export default function CollectionItems({ contractAddress, collectionName, aspec
     return results.filter((r): r is TokenItem => r !== null);
   }, [contractAddress, startTokenId, totalSupply]);
 
+  // Check marketplace listings for loaded items
+  const checkListings = useCallback(async (tokenItems: TokenItem[]) => {
+    if (!getMarketAddress()) return;
+    const newListings = new Map<number, MarketListing>();
+    for (let i = 0; i < tokenItems.length; i += BATCH_SIZE) {
+      const batch = tokenItems.slice(i, i + BATCH_SIZE);
+      const results = await Promise.all(
+        batch.map((item) => getTokenListing(contractAddress, item.tokenId))
+      );
+      for (const r of results) {
+        if (r) newListings.set(r.tokenId, r);
+      }
+    }
+    setListings((prev) => {
+      const merged = new Map(prev);
+      for (const [k, v] of newListings) merged.set(k, v);
+      return merged;
+    });
+  }, [contractAddress]);
+
   // Load first page when totalSupply is known
   useEffect(() => {
     if (totalSupply === null || totalSupply === 0) return;
@@ -160,8 +137,9 @@ export default function CollectionItems({ contractAddress, collectionName, aspec
       setItems(loaded);
       setNextStartId(startId + PAGE_SIZE);
       setLoading(false);
+      checkListings(loaded);
     });
-  }, [totalSupply, startTokenId, loadItems]);
+  }, [totalSupply, startTokenId, loadItems, checkListings]);
 
   const handleLoadMore = async () => {
     if (loadingMore) return;
@@ -171,6 +149,7 @@ export default function CollectionItems({ contractAddress, collectionName, aspec
     setItems((prev) => [...prev, ...loaded]);
     setNextStartId(startId + PAGE_SIZE);
     setLoadingMore(false);
+    checkListings(loaded);
   };
 
   const maxTokenId = totalSupply === null ? null : startTokenId === 0 ? totalSupply - 1 : totalSupply;
@@ -193,22 +172,40 @@ export default function CollectionItems({ contractAddress, collectionName, aspec
 
       {!loading && items.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-          {items.map((item) => (
-            <div key={item.tokenId} className="bg-zinc-950 border border-zinc-800 rounded overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={item.image}
-                alt={item.name || `${collectionName} #${item.tokenId}`}
-                className="w-full object-cover bg-zinc-900"
-                style={{ aspectRatio: aspectRatio || '1/1', imageRendering: pixelArt ? 'pixelated' : undefined }}
-              />
-              <div className="p-2">
-                <p className="text-xs text-zinc-400 truncate">
-                  {item.name || `#${item.tokenId}`}
-                </p>
+          {items.map((item) => {
+            const listing = listings.get(item.tokenId);
+            return (
+              <div key={item.tokenId} className="bg-zinc-950 border border-zinc-800 rounded overflow-hidden">
+                <div className="relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={item.image}
+                    alt={item.name || `${collectionName} #${item.tokenId}`}
+                    className="w-full object-cover bg-zinc-900"
+                    style={{ aspectRatio: aspectRatio || '1/1', imageRendering: pixelArt ? 'pixelated' : undefined }}
+                  />
+                  {listing && (
+                    <span className="absolute top-2 right-2 text-[10px] bg-purple-900/80 text-purple-300 px-1.5 py-0.5 rounded font-bold">
+                      {listing.priceEth} ETH
+                    </span>
+                  )}
+                </div>
+                <div className="p-2 space-y-2">
+                  <p className="text-xs text-zinc-400 truncate">
+                    {item.name || `#${item.tokenId}`}
+                  </p>
+                  {listing && (
+                    <MarketBuyButton
+                      nftAddress={contractAddress}
+                      tokenId={item.tokenId}
+                      priceWei={listing.price}
+                      priceEth={listing.priceEth}
+                    />
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
