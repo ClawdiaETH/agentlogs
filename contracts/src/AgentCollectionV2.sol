@@ -88,12 +88,14 @@ contract AgentCollectionV2 is ERC721URIStorage, Ownable {
      * @param tokenId The token ID to burn
      */
     function burn(uint256 tokenId) external onlyOwner {
+        require(tokenId == _nextTokenId, "AgentCollectionV2: can only burn latest token");
         require(ownerOf(tokenId) == owner(), "AgentCollectionV2: not held by owner");
         if (listings[tokenId].isListed) {
             listings[tokenId].isListed = false;
             emit TokenDelisted(tokenId);
         }
         _burn(tokenId);
+        _nextTokenId--;
     }
 
     /**
@@ -164,7 +166,7 @@ contract AgentCollectionV2 is ERC721URIStorage, Ownable {
     }
 
     /**
-     * @notice Total tokens minted so far (includes burned tokens in count).
+     * @notice Total tokens currently tracked by sequential token IDs.
      */
     function totalSupply() external view returns (uint256) {
         return _nextTokenId;

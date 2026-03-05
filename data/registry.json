@@ -85,7 +85,7 @@
     "priceEth": "0.004",
     "sold": true,
     "buyer": "0xe515A80dE3b0dcDF7B3F96078664e4F135644042",
-    "mintTx": "0x8b29a13170befdb273ad4f4e6f04da20214a8281ef4c92e9d397044b89c84a36",
+    "mintTx": "0x0021b9133370bfe1e27d1924f4a27a7fd8468b6973f0bbc140951d77c760d5c5",
     "palette": [
       "#1a1200",
       "#c87820",
@@ -122,7 +122,7 @@
     "priceEth": "0.005",
     "sold": false,
     "buyer": null,
-    "mintTx": "0xeb1994abebb420f4d381293ccf8d3aaabe117300cf4c1ebc4d10b482d399ca32",
+    "mintTx": "0xe966dd3b0f19bed55238ad325178b1cb8013a0883d5c1f51f00dc619dc6c2bc0",
     "palette": [
       "#0d0a1a",
       "#2d1b69",
