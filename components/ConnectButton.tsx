@@ -13,16 +13,34 @@ import { pickPreferredConnector } from '@/lib/wallet';
 
 export default function ConnectButton() {
   const { address, chain, isConnecting } = useAccount();
-  const { connectors, connect } = useConnect();
+  const { connectors, connect, error: connectError, reset } = useConnect();
   const { disconnect } = useDisconnect();
   const { switchChain } = useSwitchChain();
   const [open, setOpen] = useState(false);
+  const [stuckTimeout, setStuckTimeout] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useAccountEffect({
     onConnect: () => setOpen(false),
     onDisconnect: () => setOpen(false),
   });
+
+  // Reset stuck state when connection succeeds or errors
+  useEffect(() => {
+    if (!isConnecting) {
+      setStuckTimeout(false);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    }
+  }, [isConnecting]);
+
+  // Clear stuck flag on error
+  useEffect(() => {
+    if (connectError) {
+      setStuckTimeout(false);
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    }
+  }, [connectError]);
 
   // Close dropdown on outside click/touch
   useEffect(() => {
@@ -38,10 +56,19 @@ export default function ConnectButton() {
     };
   }, [open]);
 
-  // Pick best connector: prefer injected (browser wallet), fall back to WalletConnect
   function autoConnect() {
+    reset();
+    setStuckTimeout(false);
+
     const connector = pickPreferredConnector(connectors);
-    if (connector) connect({ connector });
+    if (!connector) return;
+
+    connect({ connector });
+
+    // If still connecting after 10s, show retry option
+    timeoutRef.current = setTimeout(() => {
+      setStuckTimeout(true);
+    }, 10_000);
   }
 
   // Wrong chain
@@ -80,7 +107,34 @@ export default function ConnectButton() {
     );
   }
 
-  // Not connected — single "Connect" button, auto-picks best connector
+  // Stuck — let user retry
+  if (isConnecting && stuckTimeout) {
+    return (
+      <button
+        onClick={() => {
+          reset();
+          setStuckTimeout(false);
+        }}
+        className="rounded border border-red-900 bg-red-950 text-red-300 px-3 py-1.5 text-xs font-bold transition-colors hover:bg-red-900 cursor-pointer whitespace-nowrap"
+      >
+        Retry
+      </button>
+    );
+  }
+
+  // Connection error
+  if (connectError) {
+    return (
+      <button
+        onClick={autoConnect}
+        className="rounded border border-red-900 bg-red-950 text-red-300 px-3 py-1.5 text-xs font-bold transition-colors hover:bg-red-900 cursor-pointer whitespace-nowrap"
+      >
+        Retry
+      </button>
+    );
+  }
+
+  // Not connected — single "Connect" button
   return (
     <button
       onClick={autoConnect}
