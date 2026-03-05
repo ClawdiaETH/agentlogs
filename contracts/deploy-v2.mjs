@@ -150,6 +150,12 @@ async function main() {
       console.log(`  mint(uri) → tokenId ${newTokenId} (listed at ${price} ETH)`);
       const tx = await contract.mint(piece.uri);
       await tx.wait();
+
+      if (wallet.address.toLowerCase() !== CLAWDIA_WALLET.toLowerCase()) {
+        console.log(`  transferFrom(${wallet.address.slice(0,6)}…, ${CLAWDIA_WALLET.slice(0,6)}…) → tokenId ${newTokenId}`);
+        const transferTx = await contract.transferFrom(wallet.address, CLAWDIA_WALLET, newTokenId);
+        await transferTx.wait();
+      }
     }
   }
 
@@ -200,7 +206,7 @@ async function main() {
       } catch (e) {
         console.error('⚠️  Verification failed:', e.message);
         console.log('You can retry manually:');
-        console.log(`  cd contracts && BASESCAN_API_KEY=${apiKey} npx hardhat verify --network base ${address} "${COLLECTION_NAME}" "${COLLECTION_SYMBOL}" "${START_PRICE}" "${PRICE_INC}" "${TREASURY}"`);
+        console.log(`  cd contracts && BASESCAN_API_KEY=$BASESCAN_API_KEY npx hardhat verify --network base ${address} "${COLLECTION_NAME}" "${COLLECTION_SYMBOL}" "${START_PRICE}" "${PRICE_INC}" "${TREASURY}"`);
       }
     }
   }
