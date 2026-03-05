@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAccount, useConnect, useSendTransaction, useSwitchChain } from 'wagmi';
+import { useAccount, useConnect, useSendTransaction, useSwitchChain, useReadContract } from 'wagmi';
 import { base } from 'wagmi/chains';
-import { encodeFunctionData, parseAbi } from 'viem';
+import { encodeFunctionData, parseAbi, formatEther } from 'viem';
 import { pickPreferredConnector } from '@/lib/wallet';
 
 interface BuyButtonProps {
@@ -15,6 +15,7 @@ interface BuyButtonProps {
 }
 
 const buyAbi = parseAbi(['function buy(uint256 tokenId) payable']);
+const priceAbi = parseAbi(['function getPrice(uint256 tokenId) view returns (uint256)']);
 
 function friendlyError(err: unknown): string {
   const msg = (err as Error)?.message ?? String(err);
@@ -38,6 +39,23 @@ export default function BuyButton({
   const { connectors, connect } = useConnect();
   const { switchChain } = useSwitchChain();
   const { sendTransaction, isPending, isSuccess, data: txHash, error: txError, reset } = useSendTransaction();
+
+  // Fetch on-chain price for this tokenId — source of truth
+  const { data: onchainPrice } = useReadContract({
+    address: saleContract as `0x${string}`,
+    abi: priceAbi,
+    functionName: 'getPrice',
+    args: [BigInt(tokenId)],
+    chainId: base.id,
+    query: { enabled: !!saleContract },
+  });
+
+  // Use on-chain price when available, fall back to registry price
+  const hasOnchainPrice = onchainPrice != null;
+  const actualPriceWei = hasOnchainPrice ? onchainPrice.toString() : priceWei;
+  const actualPriceEth = hasOnchainPrice
+    ? parseFloat(formatEther(onchainPrice)).toFixed(3)
+    : priceEth;
 
   const [error, setError] = useState<string | null>(null);
 
@@ -112,7 +130,7 @@ export default function BuyButton({
 
     sendTransaction({
       to: saleContract as `0x${string}`,
-      value: BigInt(priceWei),
+      value: BigInt(actualPriceWei),
       data,
     });
   }
@@ -124,7 +142,7 @@ export default function BuyButton({
         disabled={isPending}
         className="w-full rounded bg-purple-700 hover:bg-purple-600 disabled:bg-zinc-800 disabled:text-zinc-500 text-white font-bold px-6 py-4 text-lg transition-colors cursor-pointer disabled:cursor-not-allowed"
       >
-        {isPending ? 'Transaction pending…' : `Buy — ${priceEth} ETH`}
+        {isPending ? 'Transaction pending…' : `Buy — ${actualPriceEth} ETH`}
       </button>
       {error && <p className="text-xs text-red-400 text-center">{error}</p>}
     </div>
