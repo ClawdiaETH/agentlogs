@@ -36,12 +36,6 @@ export default function ConnectButton() {
     if (connector) connect({ connector });
   }
 
-  // Friendly connector names
-  function connectorLabel(name: string): string {
-    if (name === 'Injected') return 'Browser Wallet';
-    return name;
-  }
-
   // Wrong chain
   if (address && chain?.id !== base.id) {
     return (

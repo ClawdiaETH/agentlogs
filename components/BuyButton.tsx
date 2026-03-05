@@ -50,8 +50,8 @@ export default function BuyButton({
   });
 
   // Use on-chain price when available, fall back to registry price
-  const actualPriceWei = onchainPrice ? onchainPrice.toString() : priceWei;
-  const actualPriceEth = onchainPrice
+  const actualPriceWei = onchainPrice != null ? onchainPrice.toString() : priceWei;
+  const actualPriceEth = onchainPrice != null
     ? parseFloat(formatEther(onchainPrice)).toFixed(3)
     : priceEth;
 
