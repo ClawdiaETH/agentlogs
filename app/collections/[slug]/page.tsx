@@ -11,8 +11,7 @@ import { getCollection, loadCollections } from '@/lib/collections';
 import { getAgent } from '@/lib/agents';
 import { getRegistry } from '@/lib/kv-registry';
 import type { RegistryEntry } from '@/lib/kv-registry';
-import { rpcCall } from '@/lib/rpc';
-import { keccak256, toHex } from 'viem';
+import { isTokenListed } from '@/lib/sale-listing';
 
 // Revalidate every 60 seconds so sold status updates promptly
 export const revalidate = 60;
@@ -75,14 +74,9 @@ export default async function CollectionPage({ params }: Props) {
     // Verify sold status on-chain for the latest piece
     if (latest && !latest.sold && agent.nftContract) {
       try {
-        const selector = keccak256(toHex('getListing(uint256)')).slice(0, 10);
-        const paddedId = BigInt(latest.tokenId).toString(16).padStart(64, '0');
-        const result = await rpcCall(agent.nftContract, `${selector}${paddedId}`);
-        if (result && result.length >= 130) {
-          const isListedHex = result.slice(2 + 64, 2 + 128);
-          if (BigInt('0x' + isListedHex) === BigInt(0)) {
-            latest.sold = true; // on-chain says sold, override registry
-          }
+        const isListed = await isTokenListed(agent.nftContract, latest.tokenId);
+        if (!isListed) {
+          latest.sold = true; // on-chain says sold, override registry
         }
       } catch {
         // If RPC fails, fall through with registry value
