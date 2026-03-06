@@ -120,8 +120,8 @@
     "ipfsMetadata": "ipfs://bafkreif3e3dy4iqho7fy5fjrbbpa5l7cvxqrwzqnrrsd7s5zjaxqequyam",
     "price": "5000000000000000",
     "priceEth": "0.005",
-    "sold": false,
-    "buyer": null,
+    "sold": true,
+    "buyer": "0x10c2473692259284a66A99B76C3afa9deF8Cc031",
     "mintTx": "0xe966dd3b0f19bed55238ad325178b1cb8013a0883d5c1f51f00dc619dc6c2bc0",
     "palette": [
       "#0d0a1a",
@@ -145,6 +145,7 @@
       "glitchIndex": 48,
       "mcap": 132201,
       "change24h": -10.43
-    }
+    },
+    "saleContract": "0xeb79d5b7369f8cc79e4ed1a9a4d116d883e34868"
   }
 ]
