@@ -1,4 +1,4 @@
-import { kv } from '@vercel/kv';
+import { createClient } from '@vercel/kv';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -46,14 +46,27 @@ function readJsonFallback(): RegistryEntry[] {
   }
 }
 
-function kvAvailable(): boolean {
-  return !!(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
+/** Resolve KV credentials from env vars (supports agentsea_ prefix) */
+function getKvConfig(): { url: string; token: string } | null {
+  const url =
+    process.env.KV_REST_API_URL ??
+    process.env.agentsea_KV_REST_API_URL;
+  const token =
+    process.env.KV_REST_API_TOKEN ??
+    process.env.agentsea_KV_REST_API_TOKEN;
+  if (!url || !token) return null;
+  return { url, token };
+}
+
+function getKv() {
+  const config = getKvConfig();
+  if (!config) return null;
+  return createClient(config);
 }
 
 export async function getRegistry(): Promise<RegistryEntry[]> {
-  if (!kvAvailable()) {
-    return readJsonFallback();
-  }
+  const kv = getKv();
+  if (!kv) return readJsonFallback();
 
   try {
     const data = await kv.get<RegistryEntry[]>(REGISTRY_KEY);
@@ -76,9 +89,10 @@ export async function getRegistry(): Promise<RegistryEntry[]> {
  * know the write didn't persist (no more silent no-ops).
  */
 export async function setRegistry(entries: RegistryEntry[]): Promise<void> {
-  if (!kvAvailable()) {
+  const kv = getKv();
+  if (!kv) {
     throw new Error(
-      'KV not available: KV_REST_API_URL and KV_REST_API_TOKEN must be set. ' +
+      'KV not available: KV_REST_API_URL or agentsea_KV_REST_API_URL must be set. ' +
       'Registry write was NOT persisted.',
     );
   }

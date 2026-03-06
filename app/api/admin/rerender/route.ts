@@ -2,12 +2,73 @@ import { NextResponse } from 'next/server';
 import { ethers } from 'ethers';
 import { renderImage } from '@/lib/renderer';
 import { selectPalette } from '@/lib/renderer/palette';
+import { mulberry32 } from '@/lib/renderer/prng';
 import { uploadImage, uploadMetadata } from '@/lib/pinata';
 import { getRegistry, setRegistry } from '@/lib/kv-registry';
 import { revalidatePath } from 'next/cache';
-import type { DayLog } from '@/lib/renderer/types';
+import type { DayLog, Commit } from '@/lib/renderer/types';
 
 export const maxDuration = 300;
+
+// Synthetic data generation for re-renders (registry doesn't store raw detail)
+const SYNTH_MESSAGES = [
+  'fix: resolve edge case in handler',
+  'feat: add retry logic for RPC calls',
+  'refactor: simplify state machine',
+  'chore: bump dependencies',
+  'fix: correct off-by-one in pagination',
+  'feat: implement batch processing',
+  'fix: handle null response from API',
+  'refactor: extract utility functions',
+  'feat: add rate limiting middleware',
+  'fix: prevent double-submit on mint',
+  'chore: update contract ABI',
+  'feat: streaming log collector',
+  'fix: memory leak in websocket pool',
+  'refactor: move to async iterators',
+  'feat: add health check endpoint',
+  'fix: timezone handling in cron',
+  'chore: clean up unused imports',
+  'feat: implement graceful shutdown',
+  'fix: retry on nonce too low',
+  'refactor: consolidate error types',
+];
+const SYNTH_REPOS = [
+  'agentsea', 'clawdia-core', 'spellblock',
+  'bankrclub-ens', 'clawduct-hunt', 'sunset-protocol',
+];
+const SYNTH_HANDLES = [
+  'based_dev', 'onchain_anon', 'eth_builder', 'clawdia_fan',
+  'nft_collector', 'defi_degen', 'base_maxi', 'pixel_punk',
+  'crypto_dev', 'web3_builder', 'mint_hunter', 'art_block',
+];
+
+function generateSyntheticData(seed: number, commitCount: number, messages: number) {
+  const rng = mulberry32(seed * 0x45d9f3b);
+
+  const repos = SYNTH_REPOS.slice(0, 1 + Math.floor(rng() * 3));
+
+  const commits: Commit[] = [];
+  for (let i = 0; i < Math.min(commitCount, 20); i++) {
+    commits.push({
+      sha: Math.floor(rng() * 0xfffffff).toString(16).padStart(7, '0'),
+      message: SYNTH_MESSAGES[Math.floor(rng() * SYNTH_MESSAGES.length)],
+      repo: repos[Math.floor(rng() * repos.length)],
+      timestamp: '',
+    });
+  }
+
+  const handleCount = Math.min(12, Math.max(2, Math.floor(messages / 3)));
+  const twitter: string[] = [];
+  const farcaster: string[] = [];
+  for (let i = 0; i < handleCount; i++) {
+    const handle = SYNTH_HANDLES[Math.floor(rng() * SYNTH_HANDLES.length)];
+    if (rng() > 0.5) twitter.push(handle);
+    else farcaster.push(handle);
+  }
+
+  return { commits, reposActive: repos, replies: { twitter, farcaster, combined: [...twitter, ...farcaster] } };
+}
 
 const SET_TOKEN_URI_ABI = [
   'function setTokenURI(uint256 tokenId, string calldata uri) external',
@@ -75,12 +136,16 @@ export async function GET(request: Request) {
       const commitCount = stats.commits ?? 0;
       const errors = stats.errors ?? 0;
 
+      // Generate synthetic visual data from stats (registry doesn't store raw commits/replies)
+      const seedNum = parseInt(entry.seed, 16) || entry.dayNumber;
+      const synth = generateSyntheticData(seedNum, commitCount, stats.messages ?? 0);
+
       // Build DayLog for renderer
       const dayLog: DayLog = {
         ...partialLog,
         date: entry.date,
         agent: entry.agent,
-        seed: parseInt(entry.seed, 16) || entry.dayNumber,
+        seed: seedNum,
         tokenSymbol: '$CLAWDIA',
         priceUsd: 0,
         marketCap: mcap,
@@ -91,10 +156,10 @@ export async function GET(request: Request) {
         mcapNorm: Math.min(1, Math.log10(Math.max(1, mcap) / 1000) / 5),
         momentumSign: change24h >= 0 ? 1 : -1,
         momentumMag: Math.min(1, Math.abs(change24h) / 20),
-        commits: [],
+        commits: synth.commits,
         commitCount,
-        reposActive: [],
-        replies: { twitter: [], farcaster: [], combined: [] },
+        reposActive: synth.reposActive,
+        replies: synth.replies,
         paletteId: pal.id,
         paletteLabel: pal.label,
         palette: pal.colors,
