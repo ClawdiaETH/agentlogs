@@ -12,12 +12,12 @@ export const geometry: LayerFn = (ctx, rng, dayLog, colors) => {
     const w = 40 + Math.floor(rng() * 160);
     const h = 30 + Math.floor(rng() * 120);
 
-    ctx.globalAlpha = 0.04 + rng() * 0.06;
+    ctx.globalAlpha = 0.08 + rng() * 0.10;
     ctx.fillStyle = rng() > 0.5 ? colors.DOM : colors.SEC;
     ctx.fillRect(x, y, w, h);
 
     // Corner ticks
-    ctx.globalAlpha = 0.15 + rng() * 0.1;
+    ctx.globalAlpha = 0.20 + rng() * 0.15;
     ctx.strokeStyle = colors.ACC;
     ctx.lineWidth = 1;
     const tickLen = 6;
@@ -37,7 +37,7 @@ export const geometry: LayerFn = (ctx, rng, dayLog, colors) => {
   const layers = 3 + Math.floor(rng() * 3);
   for (let i = 0; i < layers; i++) {
     const size = 40 + i * 35;
-    ctx.globalAlpha = 0.06 - i * 0.01;
+    ctx.globalAlpha = 0.12 - i * 0.015;
     ctx.strokeStyle = colors.DOM;
     ctx.lineWidth = 1;
     ctx.strokeRect(cx - size / 2, cy - size / 2, size, size);
@@ -50,7 +50,7 @@ export const geometry: LayerFn = (ctx, rng, dayLog, colors) => {
     const sh = 1 + Math.floor(rng() * 3);
     const sx = Math.floor(rng() * 200);
     const sw = 100 + Math.floor(rng() * 500);
-    ctx.globalAlpha = 0.06 + rng() * 0.08;
+    ctx.globalAlpha = 0.10 + rng() * 0.14;
     ctx.fillStyle = colors.ACC;
     ctx.fillRect(sx, sy, sw, sh);
   }
@@ -100,9 +100,9 @@ export const geometry: LayerFn = (ctx, rng, dayLog, colors) => {
     const ps = 8 + Math.floor(rng() * 16);
     for (let mx = 0; mx < ps; mx += 4) {
       for (let my = 0; my < ps; my += 4) {
-        ctx.globalAlpha = 0.08 + rng() * 0.08;
+        ctx.globalAlpha = 0.14 + rng() * 0.14;
         ctx.fillStyle = [colors.DOM, colors.SEC, colors.ACC][Math.floor(rng() * 3)];
-        ctx.fillRect(px + mx, py + my, 3, 3);
+        ctx.fillRect(px + mx, py + my, 4, 4);
       }
     }
   }

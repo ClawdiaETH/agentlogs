@@ -38,7 +38,7 @@ export const logText: LayerFn = (ctx, rng, dayLog, colors) => {
     const x = 12 + Math.floor(rng() * 400);
     const y = 20 + Math.floor(rng() * 340);
 
-    ctx.globalAlpha = 0.06 + rng() * 0.08;
+    ctx.globalAlpha = 0.12 + rng() * 0.14;
     ctx.fillStyle = rng() > 0.7 ? colors.ACC : colors.SEC;
     ctx.fillText(text, x, y);
   }

@@ -28,7 +28,7 @@ export const repoGlyphs: LayerFn = (ctx, rng, dayLog, colors) => {
     const x = startX + (i % 3) * 70;
     const y = startY + Math.floor(i / 3) * 20;
 
-    ctx.globalAlpha = 0.3 + rng() * 0.2;
+    ctx.globalAlpha = 0.4 + rng() * 0.25;
     ctx.fillStyle = colors.SEC;
     ctx.fillText(glyph, x, y);
   });

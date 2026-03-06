@@ -20,7 +20,7 @@ export const codeRain: LayerFn = (ctx, rng, dayLog, colors) => {
 
       const hex = Math.floor(rng() * 0xffff).toString(16).padStart(4, '0');
       const fade = 1 - (j / charCount);
-      ctx.globalAlpha = (0.05 + rng() * 0.08) * fade;
+      ctx.globalAlpha = (0.10 + rng() * 0.12) * fade;
       ctx.fillStyle = rng() > 0.8 ? colors.ACC : colors.SEC;
       ctx.fillText(hex, x, y);
     }

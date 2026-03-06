@@ -23,7 +23,7 @@ export const glitch: LayerFn = (ctx, rng, dayLog, _colors) => {
     ctx.putImageData(imageData, shift, safeY);
 
     // Fill the gap left behind with a colored band
-    const gapAlpha = 0.04 + rng() * 0.08 + intensity * 0.06;
+    const gapAlpha = 0.12 + rng() * 0.12 + intensity * 0.16;
     if (shift > 0) {
       ctx.globalAlpha = gapAlpha;
       ctx.fillStyle = rng() > 0.5 ? '#ff0040' : '#00ff80';

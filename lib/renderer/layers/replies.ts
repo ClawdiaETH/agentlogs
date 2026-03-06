@@ -12,7 +12,7 @@ export const replies: LayerFn = (ctx, rng, dayLog, colors) => {
   for (const handle of twitter.slice(0, 12)) {
     const x = 20 + Math.floor(rng() * 680);
     const y = 100 + Math.floor(rng() * 500);
-    ctx.globalAlpha = 0.08 + rng() * 0.1;
+    ctx.globalAlpha = 0.15 + rng() * 0.12;
     ctx.fillStyle = colors.DOM;
     ctx.fillText(`@${handle}`, x, y);
   }
@@ -21,7 +21,7 @@ export const replies: LayerFn = (ctx, rng, dayLog, colors) => {
   for (const handle of farcaster.slice(0, 12)) {
     const x = 20 + Math.floor(rng() * 680);
     const y = 100 + Math.floor(rng() * 500);
-    ctx.globalAlpha = 0.08 + rng() * 0.1;
+    ctx.globalAlpha = 0.15 + rng() * 0.12;
     ctx.fillStyle = colors.ACC;
     ctx.fillText(`@${handle}`, x, y);
   }

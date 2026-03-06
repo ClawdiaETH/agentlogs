@@ -1,6 +1,7 @@
 import type { LayerFn } from '../types';
 
 const KNOWN_REPOS = new Set([
+  'agentsea', 'agentlogs', 'clawd',
   'spellblock', 'anons-dao', 'agentfails-wtf',
   'bankrclub-ens', 'clawduct-hunt', 'sunset-protocol',
 ]);
@@ -19,7 +20,7 @@ export const commits: LayerFn = (ctx, rng, dayLog, colors) => {
 
     // Commit message
     const isKnown = KNOWN_REPOS.has(commit.repo);
-    ctx.globalAlpha = 0.12 + rng() * 0.08;
+    ctx.globalAlpha = 0.20 + rng() * 0.12;
     ctx.fillStyle = isKnown ? colors.SEC : colors.DOM;
     ctx.font = '10px JetBrainsMono';
     ctx.fillText(commit.message.slice(0, 48), x, y);
