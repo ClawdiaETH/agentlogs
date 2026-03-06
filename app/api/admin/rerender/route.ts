@@ -100,7 +100,9 @@ export async function GET(request: Request) {
 
   if (updated) {
     await setRegistry(registry);
+    revalidatePath('/');
     revalidatePath('/collections/corrupt-memory');
+    revalidatePath('/gallery');
   }
 
   return NextResponse.json({ results, registryUpdated: updated });
