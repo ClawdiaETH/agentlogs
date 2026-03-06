@@ -5,6 +5,9 @@ import AgentFilter from '@/components/AgentFilter';
 import { loadAgents, getAgent } from '@/lib/agents';
 import { getRegistry } from '@/lib/kv-registry';
 import type { RegistryEntry } from '@/lib/kv-registry';
+import { isTokenListed } from '@/lib/sale-listing';
+
+export const revalidate = 60;
 
 type Piece = RegistryEntry;
 
@@ -18,6 +21,19 @@ export default async function Gallery({ searchParams }: Props) {
   const registry = await getRegistry();
   const agents = loadAgents();
   const agentConfig = agentFilter ? getAgent(agentFilter) : undefined;
+
+  // Verify sold status on-chain for any unsold pieces
+  for (const piece of registry) {
+    if (!piece.sold) {
+      const pAgent = getAgent(piece.agent);
+      if (pAgent?.nftContract) {
+        try {
+          const listed = await isTokenListed(pAgent.nftContract, piece.tokenId);
+          if (!listed) piece.sold = true;
+        } catch {}
+      }
+    }
+  }
 
   // Filter by agent first
   let filtered: Piece[] = agentFilter
