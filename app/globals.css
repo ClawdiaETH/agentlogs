@@ -89,11 +89,12 @@ body::after {
 .blob-drift-3 { animation: blob-drift-3 30s ease-in-out infinite; }
 .blob-drift-4 { animation: blob-drift-4 22s ease-in-out infinite; }
 
-/* Content above overlays */
+/* Content above overlays — position: relative alone lifts content
+   above the z-0 pseudo-elements without creating stacking contexts
+   that would trap dropdown menus */
 @layer base {
   body > * {
     position: relative;
-    z-index: 1;
   }
 }
 
