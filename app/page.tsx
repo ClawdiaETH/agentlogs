@@ -8,6 +8,10 @@ import { loadAgents, getAgent } from '@/lib/agents';
 import { getFeaturedCollections } from '@/lib/collections';
 import { getRegistry } from '@/lib/kv-registry';
 import type { RegistryEntry } from '@/lib/kv-registry';
+import { isTokenListed } from '@/lib/sale-listing';
+
+// Revalidate every 60 seconds so latest piece + sold status stay fresh
+export const revalidate = 60;
 
 type Piece = RegistryEntry;
 
@@ -19,6 +23,14 @@ export default async function Home() {
   // Latest minted piece from ANY agent
   const piece = registry[registry.length - 1];
   const agent = agents.find(a => a.slug === piece?.agent);
+
+  // Verify sold status on-chain
+  if (piece && !piece.sold && agent?.nftContract) {
+    try {
+      const listed = await isTokenListed(agent.nftContract, piece.tokenId);
+      if (!listed) piece.sold = true;
+    } catch {}
+  }
 
   const dayNumber = piece?.dayNumber;
   const priceEth  = piece?.priceEth;
