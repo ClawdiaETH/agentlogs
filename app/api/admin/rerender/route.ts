@@ -53,7 +53,7 @@ export async function GET(request: Request) {
         volume24h: 0,
         buys24h: 0,
         sells24h: 0,
-        mcapNorm: Math.min(1, Math.log10(Math.max(1, (entry.stats?.mcap ?? 1)) / 1000) / 5),
+        mcapNorm: (entry.stats?.mcap ?? 0) > 0 ? Math.min(1, Math.log10((entry.stats?.mcap ?? 0) / 1000) / 5) : 0,
         momentumSign: (entry.stats?.change24h ?? 0) >= 0 ? 1 : -1,
         momentumMag: Math.min(1, Math.abs(entry.stats?.change24h ?? 0) / 20),
         commits: [],
