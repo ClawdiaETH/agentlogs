@@ -46,9 +46,12 @@ function readJsonFallback(): RegistryEntry[] {
   }
 }
 
+function kvAvailable(): boolean {
+  return !!(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
+}
+
 export async function getRegistry(): Promise<RegistryEntry[]> {
-  // Fall back to JSON file if KV env vars not set (local dev)
-  if (!process.env.KV_REST_API_URL || !process.env.KV_REST_API_TOKEN) {
+  if (!kvAvailable()) {
     return readJsonFallback();
   }
 
@@ -57,24 +60,32 @@ export async function getRegistry(): Promise<RegistryEntry[]> {
     if (data && data.length > 0) {
       return data;
     }
-    // KV is empty — fall back to JSON seed
-    return readJsonFallback();
+    // KV is empty — seed from JSON and return
+    const seed = readJsonFallback();
+    if (seed.length > 0) {
+      await kv.set(REGISTRY_KEY, seed);
+    }
+    return seed;
   } catch {
     return readJsonFallback();
   }
 }
 
-function kvAvailable(): boolean {
-  return !!(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
-}
-
+/**
+ * Write registry to KV. Throws if KV is unavailable so callers
+ * know the write didn't persist (no more silent no-ops).
+ */
 export async function setRegistry(entries: RegistryEntry[]): Promise<void> {
-  if (!kvAvailable()) return; // no-op without KV — pipeline uses GitHub commit fallback
+  if (!kvAvailable()) {
+    throw new Error(
+      'KV not available: KV_REST_API_URL and KV_REST_API_TOKEN must be set. ' +
+      'Registry write was NOT persisted.',
+    );
+  }
   await kv.set(REGISTRY_KEY, entries);
 }
 
 export async function addEntry(entry: RegistryEntry): Promise<void> {
-  if (!kvAvailable()) return; // no-op — caller falls back to GitHub commit
   const registry = await getRegistry();
   registry.push(entry);
   registry.sort((a, b) => a.tokenId - b.tokenId);
@@ -82,7 +93,6 @@ export async function addEntry(entry: RegistryEntry): Promise<void> {
 }
 
 export async function markSold(tokenId: number, buyer: string): Promise<void> {
-  if (!kvAvailable()) return;
   const registry = await getRegistry();
   const entry = registry.find((e) => e.tokenId === tokenId);
   if (entry) {

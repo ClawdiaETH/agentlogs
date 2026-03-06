@@ -18,6 +18,7 @@ import { codeRain } from './layers/code-rain';
 import { repoGlyphs } from './layers/repo-glyphs';
 import { priceWaveform } from './layers/price-waveform';
 import { scanlines } from './layers/scanlines';
+import { paletteLabel } from './layers/palette-label';
 import { metadataLine } from './layers/metadata-line';
 import { watermark } from './layers/watermark';
 
@@ -36,8 +37,9 @@ const LAYERS: LayerFn[] = [
   repoGlyphs,    // 12
   priceWaveform,  // 13
   scanlines,      // 14
-  metadataLine,   // 15
-  watermark,      // 16
+  paletteLabel,   // 15
+  metadataLine,   // 16
+  watermark,      // 17
 ];
 
 let fontRegistered = false;
