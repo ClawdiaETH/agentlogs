@@ -184,5 +184,22 @@
       "mcap": 137229,
       "change24h": -8.82
     }
+  },
+  {
+    "tokenId": 5,
+    "dayNumber": 5,
+    "date": "2026-03-05",
+    "agent": "clawdia",
+    "title": "Corrupt Memory #005",
+    "ipfsImage": "https://gateway.pinata.cloud/ipfs/bafkreibxsncxmy2zvnvrtti4y42b366rdjpzpx7p24ita7gtpeph7ra2re",
+    "ipfsMetadata": "ipfs://bafkreighrnywy5xsb3f2rpsksbqyos2w44oeu6o2i624u7knbhvksqwvde",
+    "price": "6000000000000000",
+    "priceEth": "0.006",
+    "sold": false,
+    "buyer": null,
+    "mintTx": "0x6766d35585279d6a90cd1062004047ef8b83d417e72d33bb0a58bcd5771c5216",
+    "paletteLabel": "?",
+    "paletteId": "?",
+    "stats": {}
   }
 ]
