@@ -154,8 +154,8 @@
     "date": "2026-03-05",
     "agent": "clawdia",
     "title": "Corrupt Memory",
-    "ipfsImage": "https://gateway.pinata.cloud/ipfs/QmbShfnTkRyHKdKLo5jLhuwTwJh134n4USkVuvLmp2gZTu",
-    "ipfsMetadata": "ipfs://Qma3Uv49GzM1bsUHgKdgYKstSCSYZxGtVqK7yznZ96aZjh",
+    "ipfsImage": "https://gateway.pinata.cloud/ipfs/QmNpu275r88715UVCdUJXnrwSLkRze7WXgsqbvf2EbzLUq",
+    "ipfsMetadata": "ipfs://QmcAt94UmiygAjS8m4Jxt665papQM9UDe8L3iyuZddFWAP",
     "price": "6000000000000000",
     "priceEth": "0.006",
     "sold": true,
@@ -165,11 +165,11 @@
     "paletteLabel": "Incident",
     "paletteName": "Incident",
     "palette": [
-      "#18160a",
-      "#de952c",
-      "#e5bc57",
-      "#e8d353",
-      "#e6e5dc"
+      "#180c0a",
+      "#d12120",
+      "#ca6426",
+      "#eac237",
+      "#e8dedb"
     ],
     "seed": "0x1715609D",
     "stats": {
@@ -183,6 +183,80 @@
       "glitchIndex": 100,
       "mcap": 155540,
       "change24h": 14.24
+    }
+  },
+  {
+    "tokenId": 6,
+    "dayNumber": 6,
+    "date": "2026-03-06",
+    "agent": "clawdia",
+    "title": "Corrupt Memory",
+    "ipfsImage": "https://gateway.pinata.cloud/ipfs/QmNZ9WFLyqRLB4NkfX63UdEpNEKVSmGLUGNbfDsjX9NZGM",
+    "ipfsMetadata": "ipfs://QmUSpKm73pg2q2pHkZEhDnsaFWfvQn3Sxsx4f1gHPC3tjf",
+    "price": "7000000000000000",
+    "priceEth": "0.007",
+    "sold": false,
+    "buyer": null,
+    "mintTx": "0xde1dafc025a2d5d08185b6b2cbb1e1429694ffff3d8c9abb9abbaec6cba876e5",
+    "paletteId": "GOLDEN_HOUR",
+    "paletteLabel": "Golden Hour",
+    "paletteName": "Golden Hour",
+    "palette": [
+      "#0e0c06",
+      "#e7af2e",
+      "#e6c01c",
+      "#f9d744",
+      "#f0eeeb"
+    ],
+    "seed": "0xB54CDA56",
+    "stats": {
+      "commits": 0,
+      "errors": 0,
+      "messages": 0,
+      "events": 0,
+      "txns": 0,
+      "posts": 0,
+      "peakHour": 18,
+      "glitchIndex": 0,
+      "mcap": 128745,
+      "change24h": -12.17
+    }
+  },
+  {
+    "tokenId": 6,
+    "dayNumber": 6,
+    "date": "2026-03-06",
+    "agent": "clawdia",
+    "title": "Corrupt Memory",
+    "ipfsImage": "https://gateway.pinata.cloud/ipfs/QmNZ9WFLyqRLB4NkfX63UdEpNEKVSmGLUGNbfDsjX9NZGM",
+    "ipfsMetadata": "ipfs://QmUSpKm73pg2q2pHkZEhDnsaFWfvQn3Sxsx4f1gHPC3tjf",
+    "price": "7000000000000000",
+    "priceEth": "0.007",
+    "sold": false,
+    "buyer": null,
+    "mintTx": "0xde1dafc025a2d5d08185b6b2cbb1e1429694ffff3d8c9abb9abbaec6cba876e5",
+    "paletteId": "GOLDEN_HOUR",
+    "paletteLabel": "Golden Hour",
+    "paletteName": "Golden Hour",
+    "palette": [
+      "#0e0c06",
+      "#e7af2e",
+      "#e6c01c",
+      "#f9d744",
+      "#f0eeeb"
+    ],
+    "seed": "0xB54CDA56",
+    "stats": {
+      "commits": 0,
+      "errors": 0,
+      "messages": 0,
+      "events": 0,
+      "txns": 0,
+      "posts": 0,
+      "peakHour": 18,
+      "glitchIndex": 0,
+      "mcap": 128745,
+      "change24h": -12.17
     }
   }
 ]
