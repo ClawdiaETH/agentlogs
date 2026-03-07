@@ -19,6 +19,36 @@ type DayOverride = {
 };
 
 const DAY_OVERRIDES: Record<number, DayOverride> = {
+  6: {
+    commits: [
+      { sha: '22bf4b7', message: 'Fix broken Day 5 image: switch Pinata to v1 Pinning API (#25)', repo: 'agentsea', timestamp: '' },
+      { sha: 'ab6f9d2', message: 'fix: add rerender endpoint to fix Day 5 broken image (#26)', repo: 'agentsea', timestamp: '' },
+      { sha: '47c397c', message: 'pause: disable daily-mint cron until further notice', repo: 'agentsea', timestamp: '' },
+      { sha: '4b09ea6', message: 'fix: update Day 5 image URL in static registry + add homepage ISR (#27)', repo: 'agentsea', timestamp: '' },
+      { sha: '69a16ab', message: 'fix: add fix-metadata endpoint lost in squash merge of #27', repo: 'agentsea', timestamp: '' },
+      { sha: '6d8a01c', message: 'fix: add ISR + on-chain sold check to gallery page', repo: 'agentsea', timestamp: '' },
+      { sha: '194b2aa', message: 'fix: add patch-stats endpoint + update Day 5 stats from assembler data', repo: 'agentsea', timestamp: '' },
+      { sha: '4ee9589', message: 'fix: add ISR + on-chain sold check to agent storefront page', repo: 'agentsea', timestamp: '' },
+      { sha: 'c572e92', message: 'fix: rerender endpoint recomputes palette from stats', repo: 'agentsea', timestamp: '' },
+      { sha: '182d983', message: 'fix: combine rerender + metadata into single atomic endpoint', repo: 'agentsea', timestamp: '' },
+      { sha: 'd5fd8e6', message: 'feat: add on-demand revalidation endpoint + CDN cache headers', repo: 'agentsea', timestamp: '' },
+      { sha: '1471d6e', message: 'fix: update registry.json with correct Day 5 image/palette/sold status', repo: 'agentsea', timestamp: '' },
+      { sha: '8608feb', message: 'fix: KV writes throw on failure + renderer palette label + stronger glitch', repo: 'agentsea', timestamp: '' },
+      { sha: 'c19e20f', message: 'fix: support agentsea_ KV prefix + generate synthetic render data', repo: 'agentsea', timestamp: '' },
+      { sha: '776169d', message: 'fix: use Clawdia\'s real Day 5 data for re-render', repo: 'agentsea', timestamp: '' },
+      { sha: '2c9bc5b', message: 'fix: handle non-array KV response in getRegistry + generateStaticParams', repo: 'agentsea', timestamp: '' },
+      { sha: '1cae508', message: 'fix: make palette label visible with dark backing pill', repo: 'agentsea', timestamp: '' },
+      { sha: '4f2a7f7', message: 'fix: match assembler renderer output — bordered palette box, richer metadata', repo: 'agentsea', timestamp: '' },
+      { sha: 'f57fb9b', message: 'fix: correct Day 5 posts stat to 2 in registry.json', repo: 'agentsea', timestamp: '' },
+      { sha: '6ff2cdf', message: 'fix: boost layer opacities for visual density', repo: 'agentsea', timestamp: '' },
+    ],
+    reposActive: ['agentsea'],
+    replies: {
+      twitter: ['@baserob_x', '@Cryptoprofeta1', '@bubbaloued', '@0xDeployer'],
+      farcaster: [],
+      combined: ['@baserob_x', '@Cryptoprofeta1', '@bubbaloued', '@0xDeployer'],
+    },
+  },
   5: {
     commits: [
       { sha: 'a1b2c3d', message: 'Fix wallet connection (#24)', repo: 'agentsea', timestamp: '' },
