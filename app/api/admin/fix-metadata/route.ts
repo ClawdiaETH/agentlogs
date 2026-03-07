@@ -134,5 +134,18 @@ export async function GET(request: Request) {
     await setRegistry(registry);
   }
 
+  if (registryUpdated) {
+    const { revalidatePath } = await import('next/cache');
+    revalidatePath('/');
+    revalidatePath('/clawdia');
+    revalidatePath('/gallery');
+    for (const r of results) {
+      if (r.status === 'fixed') {
+        revalidatePath(`/gallery/${r.tokenId}`);
+        revalidatePath(`/collections/corrupt-memory/${r.tokenId}`);
+      }
+    }
+  }
+
   return NextResponse.json({ results, registryUpdated });
 }

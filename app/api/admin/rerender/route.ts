@@ -332,6 +332,13 @@ export async function GET(request: Request) {
     revalidatePath('/clawdia');
     revalidatePath('/collections/corrupt-memory');
     revalidatePath('/gallery');
+    // Revalidate individual token pages for all updated entries
+    for (const r of results) {
+      if ('dayNumber' in r) {
+        revalidatePath(`/gallery/${r.tokenId}`);
+        revalidatePath(`/collections/corrupt-memory/${r.tokenId}`);
+      }
+    }
   }
 
   return NextResponse.json({ results, registryUpdated: updated });
