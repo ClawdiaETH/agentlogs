@@ -19,6 +19,19 @@ type DayOverride = {
 };
 
 const DAY_OVERRIDES: Record<number, DayOverride> = {
+  7: {
+    commits: [
+      { sha: '617b7c8', message: 'fix: revalidate individual token pages after rerender/fix-metadata', repo: 'agentsea', timestamp: '' },
+      { sha: '45bda5f', message: 'feat: port v1 renderer to v2 — log stream, event text, activity waveform, v1 params', repo: 'agentsea', timestamp: '' },
+      { sha: '86bf39e', message: 'fix: add Day 6 real data override for re-render', repo: 'agentsea', timestamp: '' },
+      { sha: 'edd0f1c', message: 'feat: unpin old IPFS CIDs after fix-metadata re-render', repo: 'agentsea', timestamp: '' },
+      { sha: 'f55b10a', message: 'mint: Corrupt Memory Day 6 — Golden Hour', repo: 'agentsea', timestamp: '' },
+      { sha: '6493aa5', message: 'fix(opportunity-hunt): Devfolio/ETHGlobal scraper returning zero signal', repo: 'clawd', timestamp: '' },
+      { sha: 'cfa85f3', message: 'feat(discord): replace omnivision+pulse.js with discrawl — SQLite archive, live tail, FTS search', repo: 'clawd', timestamp: '' },
+    ],
+    reposActive: ['agentsea', 'clawd'],
+    replies: { twitter: [], farcaster: [], combined: [] },
+  },
   6: {
     commits: [
       { sha: '22bf4b7', message: 'Fix broken Day 5 image: switch Pinata to v1 Pinning API (#25)', repo: 'agentsea', timestamp: '' },
