@@ -1,5 +1,10 @@
 {
-  "crons": [],
+  "crons": [
+    {
+      "path": "/api/cron/daily-mint",
+      "schedule": "0 11 * * *"
+    }
+  ],
   "headers": [
     {
       "source": "/(clawdia|gallery|collections/corrupt-memory)",
