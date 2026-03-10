@@ -1,9 +1,10 @@
 import { assembleDayLog } from './assembler';
 import { renderImage } from './renderer';
 import { uploadImage, uploadMetadata } from './pinata';
-import { mintNFT } from './contract';
+import { mintNFT, autoListOnMarket } from './contract';
 import { hasDayNumber, addEntry, getRegistry } from './kv-registry';
 import { commitRegistry } from './github-commit';
+import { addProvenanceEvent } from './kv-provenance';
 import type { AgentConfig } from './agents';
 import type { DayLog } from './renderer/types';
 
@@ -170,6 +171,35 @@ export async function runPipeline(secrets: PipelineSecrets): Promise<PipelineRes
       `mint: ${seriesTitle} Day ${dayNumber} — ${dayLog.paletteLabel}`,
       secrets.githubToken,
     );
+  }
+
+  // 8. Record provenance event
+  await addProvenanceEvent({
+    id: `${secrets.agentSlug}:mint:${txHash}`,
+    agent: secrets.agentSlug,
+    type: 'mint',
+    initiatedBy: 'agent',
+    timestamp: new Date().toISOString(),
+    tokenId,
+    txHash,
+    priceWei: priceWei.toString(),
+    priceEth,
+  });
+
+  // 9. Auto-list on V2 marketplace (if configured)
+  const marketV2 = process.env.NEXT_PUBLIC_MARKET_V2_CONTRACT;
+  if (marketV2 && secrets.contractAddress) {
+    try {
+      await autoListOnMarket(
+        tokenId,
+        priceWei.toString(),
+        secrets.contractAddress,
+        marketV2,
+        secrets.privateKey,
+      );
+    } catch {
+      // Non-fatal — piece is minted even if listing fails
+    }
   }
 
   return { tokenId, dayNumber, txHash, imageUri, metadataUri };

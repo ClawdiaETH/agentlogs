@@ -98,3 +98,39 @@ export async function rpcGetLogs(params: {
 
   return allLogs;
 }
+
+export interface TransactionData {
+  hash: string;
+  from: string;
+  to: string;
+  blockNumber: string;
+}
+
+/**
+ * Fetch transaction details by hash. Used to check tx.from (sender)
+ * for autonomy score verification.
+ */
+export async function rpcGetTransaction(txHash: string): Promise<TransactionData | null> {
+  try {
+    const res = await fetch(BASE_RPC, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        method: 'eth_getTransactionByHash',
+        params: [txHash],
+        id: 1,
+      }),
+    });
+    const data = await res.json();
+    if (!data.result) return null;
+    return {
+      hash: data.result.hash,
+      from: data.result.from,
+      to: data.result.to,
+      blockNumber: data.result.blockNumber,
+    };
+  } catch {
+    return null;
+  }
+}
