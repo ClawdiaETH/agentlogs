@@ -39,6 +39,7 @@ contract AgentMarketV2 is Ownable {
     uint256 public constant FEE_BPS = 250; // 2.5%
     uint256 public constant DEFAULT_OFFER_DURATION = 7 days;
     address public treasury;
+    uint256 public totalEscrowed;
 
     event Listed(address indexed nft, uint256 indexed tokenId, address indexed seller, uint256 price);
     event Sold(address indexed nft, uint256 indexed tokenId, address indexed buyer, uint256 price);
@@ -138,6 +139,7 @@ contract AgentMarketV2 is Ownable {
             expiry: expiry,
             active: true
         });
+        totalEscrowed += msg.value;
 
         emit OfferMade(nft, tokenId, msg.sender, msg.value, expiry);
         _emitAction("makeOffer");
@@ -163,6 +165,7 @@ contract AgentMarketV2 is Ownable {
         // Effects
         delete offers[nft][tokenId][offerer];
         delete listings[nft][tokenId]; // Clear listing if exists
+        totalEscrowed -= o.amount;
 
         // Interactions
         token.transferFrom(msg.sender, offerer, tokenId);
@@ -180,6 +183,7 @@ contract AgentMarketV2 is Ownable {
         require(o.active, "V2: no active offer");
 
         delete offers[nft][tokenId][msg.sender];
+        totalEscrowed -= o.amount;
 
         (bool sent,) = payable(msg.sender).call{value: o.amount}("");
         require(sent, "V2: refund failed");
@@ -226,7 +230,9 @@ contract AgentMarketV2 is Ownable {
     }
 
     function rescueETH() external onlyOwner {
-        (bool sent,) = payable(owner()).call{value: address(this).balance}("");
+        require(address(this).balance > totalEscrowed, "V2: no excess ETH");
+        uint256 withdrawable = address(this).balance - totalEscrowed;
+        (bool sent,) = payable(owner()).call{value: withdrawable}("");
         require(sent, "V2: rescue failed");
     }
 

@@ -28,28 +28,50 @@ export async function getProvenanceEvents(
   if (!kv) return [];
 
   const limit = opts?.limit ?? 50;
-  // Fetch extra if filtering by type (we'll trim after)
-  const fetchCount = opts?.type ? limit * 3 : limit;
   const offset = opts?.offset ?? 0;
 
   try {
-    const raw = await kv.zrange(kvKey(agent), '+inf', '-inf', {
-      byScore: true,
-      rev: true,
-      offset,
-      count: fetchCount,
-    });
+    if (!opts?.type) {
+      const raw = await kv.zrange(kvKey(agent), '+inf', '-inf', {
+        byScore: true,
+        rev: true,
+        offset,
+        count: limit,
+      });
 
-    let events: ProvenanceEvent[] = raw.map((item) => {
-      if (typeof item === 'string') return JSON.parse(item);
-      return item as ProvenanceEvent;
-    });
-
-    if (opts?.type) {
-      events = events.filter((e) => e.type === opts.type);
+      return raw.map((item) => {
+        if (typeof item === 'string') return JSON.parse(item);
+        return item as ProvenanceEvent;
+      });
     }
 
-    return events.slice(0, limit);
+    const filtered: ProvenanceEvent[] = [];
+    const targetCount = offset + limit;
+    const fetchCount = Math.max(limit * 3, 50);
+    let rawOffset = 0;
+
+    while (filtered.length < targetCount) {
+      const raw = await kv.zrange(kvKey(agent), '+inf', '-inf', {
+        byScore: true,
+        rev: true,
+        offset: rawOffset,
+        count: fetchCount,
+      });
+
+      if (raw.length === 0) break;
+
+      for (const item of raw) {
+        const event = typeof item === 'string' ? JSON.parse(item) : (item as ProvenanceEvent);
+        if (event.type === opts.type) {
+          filtered.push(event);
+        }
+      }
+
+      rawOffset += raw.length;
+      if (raw.length < fetchCount) break;
+    }
+
+    return filtered.slice(offset, offset + limit);
   } catch {
     return [];
   }

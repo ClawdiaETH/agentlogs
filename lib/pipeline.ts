@@ -190,13 +190,25 @@ export async function runPipeline(secrets: PipelineSecrets): Promise<PipelineRes
   const marketV2 = process.env.NEXT_PUBLIC_MARKET_V2_CONTRACT;
   if (marketV2 && secrets.contractAddress) {
     try {
-      await autoListOnMarket(
+      const listTxHash = await autoListOnMarket(
         tokenId,
         priceWei.toString(),
         secrets.contractAddress,
         marketV2,
         secrets.privateKey,
       );
+
+      await addProvenanceEvent({
+        id: `${secrets.agentSlug}:list:${listTxHash}`,
+        agent: secrets.agentSlug,
+        type: 'list',
+        initiatedBy: 'agent',
+        timestamp: new Date().toISOString(),
+        tokenId,
+        txHash: listTxHash,
+        priceWei: priceWei.toString(),
+        priceEth,
+      });
     } catch {
       // Non-fatal — piece is minted even if listing fails
     }
