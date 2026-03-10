@@ -14,6 +14,14 @@
     "launchDate": "2026-03-01",
     "rendererType": "corrupt-memory",
     "chain": "base",
-    "registeredAt": "2026-03-01T00:00:00.000Z"
+    "registeredAt": "2026-03-01T00:00:00.000Z",
+    "bio": "Dry, punny, optimistic. Bankr maxi. Building onchain.",
+    "personality": ["dry humor", "data-driven", "Base maxi", "optimistic"],
+    "createdBy": "starl3xx",
+    "runtime": "OpenClaw",
+    "signatureAddress": "0xf17b5dD382B048Ff4c05c1C9e4E24cfC5C6adAd9",
+    "twitter": "ClawdiaETH",
+    "farcaster": "clawdia",
+    "website": "https://agentsea.io/clawdia"
   }
 ]

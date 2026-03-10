@@ -4,6 +4,7 @@ import { getAgent } from '@/lib/agents';
 import { isAddress } from 'viem';
 import { isTokenListed } from '@/lib/sale-listing';
 import { revalidatePath } from 'next/cache';
+import { addProvenanceEvent } from '@/lib/kv-provenance';
 
 /**
  * POST /api/mark-sold
@@ -50,6 +51,19 @@ export async function POST(request: Request) {
 
     // Mark registry entry as sold after trusted on-chain verification.
     await markSold(parsedTokenId, buyer);
+
+    // Record provenance event
+    await addProvenanceEvent({
+      id: `${entry.agent}:sale:${parsedTokenId}:${Date.now()}`,
+      agent: entry.agent,
+      type: 'sale',
+      initiatedBy: 'human',
+      timestamp: new Date().toISOString(),
+      tokenId: parsedTokenId,
+      toAddress: buyer,
+      priceWei: entry.price,
+      priceEth: entry.priceEth,
+    });
 
     // Revalidate the collection page so it shows updated status
     revalidatePath(`/collections/${agent.slug}`);

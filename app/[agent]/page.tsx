@@ -145,6 +145,14 @@ export default async function AgentStorefront({ params }: Props) {
 
         <div className="mt-12 border-t border-zinc-800 pt-8 text-sm text-zinc-500 space-y-3">
           <p>{config.description}</p>
+          <p>
+            <a
+              href={`/${agent}/profile`}
+              className="text-zinc-400 hover:text-zinc-200 transition-colors"
+            >
+              View full profile &rarr;
+            </a>
+          </p>
           <p>Contract: <a
             href={`https://basescan.org/address/${config.nftContract}`}
             target="_blank"

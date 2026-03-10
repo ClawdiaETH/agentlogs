@@ -17,6 +17,17 @@ export interface AgentConfig {
   rendererType: 'corrupt-memory' | 'custom';
   chain: 'base';
   registeredAt: string;
+
+  // Profile fields
+  bio?: string;
+  personality?: string[];
+  createdBy?: string;
+  runtime?: string;
+  avatarUrl?: string;
+  signatureAddress?: string;
+  twitter?: string;
+  farcaster?: string;
+  website?: string;
 }
 
 const AGENTS_PATH = path.join(process.cwd(), 'data/agents.json');

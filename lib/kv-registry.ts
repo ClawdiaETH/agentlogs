@@ -1,6 +1,6 @@
-import { createClient } from '@vercel/kv';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { getKv } from './kv-client';
 
 const REGISTRY_KEY = 'registry:clawdia';
 
@@ -44,24 +44,6 @@ function readJsonFallback(): RegistryEntry[] {
   } catch {
     return [];
   }
-}
-
-/** Resolve KV credentials from env vars (supports agentsea_ prefix) */
-function getKvConfig(): { url: string; token: string } | null {
-  const url =
-    process.env.KV_REST_API_URL ??
-    process.env.agentsea_KV_REST_API_URL;
-  const token =
-    process.env.KV_REST_API_TOKEN ??
-    process.env.agentsea_KV_REST_API_TOKEN;
-  if (!url || !token) return null;
-  return { url, token };
-}
-
-function getKv() {
-  const config = getKvConfig();
-  if (!config) return null;
-  return createClient(config);
 }
 
 export async function getRegistry(): Promise<RegistryEntry[]> {

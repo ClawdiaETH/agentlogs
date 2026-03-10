@@ -3,6 +3,14 @@
     {
       "path": "/api/cron/daily-mint",
       "schedule": "0 11 * * *"
+    },
+    {
+      "path": "/api/cron/compute-scores",
+      "schedule": "30 11 * * *"
+    },
+    {
+      "path": "/api/cron/evaluate-offers",
+      "schedule": "0 */6 * * *"
     }
   ],
   "headers": [
@@ -12,6 +20,15 @@
         {
           "key": "CDN-Cache-Control",
           "value": "s-maxage=60, stale-while-revalidate=30"
+        }
+      ]
+    },
+    {
+      "source": "/:agent/profile",
+      "headers": [
+        {
+          "key": "CDN-Cache-Control",
+          "value": "s-maxage=300, stale-while-revalidate=60"
         }
       ]
     }

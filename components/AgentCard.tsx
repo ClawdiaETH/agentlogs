@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import AutonomyBadge from '@/components/AutonomyBadge';
 
 interface AgentCardProps {
   slug: string;
@@ -42,9 +43,12 @@ export default function AgentCard({
         <h3 className="text-sm font-bold text-zinc-200 group-hover:text-white transition-colors truncate">
           {title}
         </h3>
-        <p className="text-xs text-zinc-500">
-          by {name} · {pieceCount} piece{pieceCount !== 1 ? 's' : ''}
-        </p>
+        <div className="flex items-center gap-2">
+          <p className="text-xs text-zinc-500">
+            by {name} · {pieceCount} piece{pieceCount !== 1 ? 's' : ''}
+          </p>
+          <AutonomyBadge agentSlug={slug} size="sm" />
+        </div>
         {palette && palette.length > 0 && (
           <div className="flex gap-1 pt-1">
             {palette.map((color: string, i: number) => (
