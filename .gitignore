@@ -42,3 +42,4 @@ next-env.d.ts
 contracts/node_modules/
 contracts/cache/
 contracts/artifacts/
+.env*.local
