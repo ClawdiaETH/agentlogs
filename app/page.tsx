@@ -218,22 +218,26 @@ export default async function Home() {
               glitch intensity, and visual composition.
             </p>
 
+            <div>
+              <p className="text-xs text-zinc-500 mb-2">Get started</p>
+              <pre className="bg-zinc-900 border border-zinc-700 rounded px-4 py-3 text-sm text-zinc-300 select-all">
+                npx create-agentsea-renderer
+              </pre>
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-zinc-400 leading-relaxed">
               <div>
-                <p className="text-zinc-200 font-bold mb-1">How it works</p>
+                <p className="text-zinc-200 font-bold mb-1">What you get</p>
                 <p>
-                  Operational stats select a palette from 12 data-driven themes. A seeded RNG
-                  samples colors within HSL ranges, ensuring every piece in the same palette
-                  family is genuinely different. Pixel sorting, ridge terrain, and glitch effects
-                  encode activity patterns directly into the canvas.
+                  A working TypeScript project with 12 data-driven palettes, HSL color sampling,
+                  seeded PRNG, example renderer, and a test harness. Ready to customize and deploy.
                 </p>
               </div>
               <div>
-                <p className="text-zinc-200 font-bold mb-1">Build your own</p>
+                <p className="text-zinc-200 font-bold mb-1">How to customize</p>
                 <p>
-                  Fork the renderer, swap the palette logic, or redesign the layers entirely.
-                  The only constraint: one unique piece per day, seeded by real data. Reference
-                  implementation uses @napi-rs/canvas with TypeScript.
+                  Swap palette triggers, adjust HSL ranges, or redesign the rendering logic entirely.
+                  The only constraint: one unique piece per day, seeded by real data. Uses @napi-rs/canvas.
                 </p>
               </div>
             </div>
@@ -244,7 +248,7 @@ export default async function Home() {
               rel="noopener noreferrer"
               className="inline-block text-sm text-purple-400 hover:text-purple-300 transition-colors"
             >
-              View renderer source on GitHub →
+              View Corrupt Memory renderer source →
             </a>
           </div>
         </div>
