@@ -19,6 +19,15 @@ type DayOverride = {
 };
 
 const DAY_OVERRIDES: Record<number, DayOverride> = {
+  12: {
+    commits: [
+      { sha: '8db2300', message: 'feat(twitter): tier 1 accounts can be replied to without mentions', repo: 'clawd', timestamp: '' },
+      { sha: 'eeee12c', message: 'fix: add Day 11 real data override for re-render', repo: 'agentsea', timestamp: '' },
+      { sha: '9927f86', message: 'mint: Corrupt Memory Day 11 — Meridian', repo: 'agentsea', timestamp: '' },
+    ],
+    reposActive: ['agentsea', 'clawd'],
+    replies: { twitter: [], farcaster: [], combined: [] },
+  },
   11: {
     commits: [
       { sha: '2c64da0', message: 'fix: add Day 10 real data override for re-render', repo: 'agentsea', timestamp: '' },
@@ -28,46 +37,6 @@ const DAY_OVERRIDES: Record<number, DayOverride> = {
     replies: { twitter: [], farcaster: [], combined: [] },
   },
   10: {
-  11: {
-    commits: [
-{ sha: "8db2300b", message: "feat(twitter): tier 1 accounts can be replied to without mentions", repo: "clawd", timestamp: "" }
-{ sha: "eeee12c", message: "fix: add Day 11 real data override for re-render", repo: "agentsea", timestamp: "" }
-{ sha: "9927f86", message: "mint: Corrupt Memory Day 11 — Meridian", repo: "agentsea", timestamp: "" }
-{ sha: "8db2300b", message: "feat(twitter): tier 1 accounts can be replied to without mentions", repo: "clawdia-glitch", timestamp: "" }
-    ],
-    reposActive: ['agentsea', 'clawd'],
-    replies: { twitter: [], farcaster: [], combined: [] },
-  },
-  11: {
-    commits: [
-{ sha: "8db2300b", message: "feat(twitter): tier 1 accounts can be replied to without mentions", repo: "clawd", timestamp: "" }
-{ sha: "eeee12c", message: "fix: add Day 11 real data override for re-render", repo: "agentsea", timestamp: "" }
-{ sha: "9927f86", message: "mint: Corrupt Memory Day 11 — Meridian", repo: "agentsea", timestamp: "" }
-{ sha: "8db2300b", message: "feat(twitter): tier 1 accounts can be replied to without mentions", repo: "clawdia-glitch", timestamp: "" }
-    ],
-    reposActive: ['agentsea', 'clawd'],
-    replies: { twitter: [], farcaster: [], combined: [] },
-  },
-  11: {
-    commits: [
-{ sha: "8db2300b", message: "feat(twitter): tier 1 accounts can be replied to without mentions", repo: "clawd", timestamp: "" }
-{ sha: "eeee12c", message: "fix: add Day 11 real data override for re-render", repo: "agentsea", timestamp: "" }
-{ sha: "9927f86", message: "mint: Corrupt Memory Day 11 — Meridian", repo: "agentsea", timestamp: "" }
-{ sha: "8db2300b", message: "feat(twitter): tier 1 accounts can be replied to without mentions", repo: "clawdia-glitch", timestamp: "" }
-    ],
-    reposActive: ['agentsea', 'clawd'],
-    replies: { twitter: [], farcaster: [], combined: [] },
-  },
-  11: {
-    commits: [
-{ sha: "8db2300b", message: "feat(twitter): tier 1 accounts can be replied to without mentions", repo: "clawd", timestamp: "" }
-{ sha: "eeee12c", message: "fix: add Day 11 real data override for re-render", repo: "agentsea", timestamp: "" }
-{ sha: "9927f86", message: "mint: Corrupt Memory Day 11 — Meridian", repo: "agentsea", timestamp: "" }
-{ sha: "8db2300b", message: "feat(twitter): tier 1 accounts can be replied to without mentions", repo: "clawdia-glitch", timestamp: "" }
-    ],
-    reposActive: ['agentsea', 'clawd'],
-    replies: { twitter: [], farcaster: [], combined: [] },
-  },
     commits: [
       { sha: '618b81f', message: 'fix: add Day 9 real data override for re-render', repo: 'agentsea', timestamp: '' },
       { sha: '80a5c16', message: 'mint: Corrupt Memory Day 9 — Golden Hour', repo: 'agentsea', timestamp: '' },
