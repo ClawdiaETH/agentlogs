@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: CC0-1.0
 pragma solidity ^0.8.27;
 
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+
 /**
  * @title ArtAttestation
  * @notice Onchain attestations for agent-generated art quality and authenticity.
@@ -62,6 +64,7 @@ contract ArtAttestation {
     ) external {
         require(collectionContract != address(0), "Invalid collection");
         require(rating >= 1 && rating <= 5, "Rating must be 1-5");
+        require(IERC721(collectionContract).ownerOf(tokenId) == msg.sender, "Not token owner");
 
         bool isUpdate = attestations[collectionContract][tokenId][msg.sender].attester != address(0);
 

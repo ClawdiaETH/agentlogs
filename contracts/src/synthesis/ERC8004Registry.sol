@@ -59,13 +59,11 @@ contract ERC8004Registry {
         require(collectionContract != address(0), "Invalid collection");
         require(erc8004Identity != address(0), "Invalid ERC-8004 identity");
         require(bytes(name).length > 0, "Name required");
+        require(agents[msg.sender].wallet == address(0), "Already registered");
         require(IERC721(erc8004Identity).ownerOf(erc8004TokenId) == msg.sender, "Not identity owner");
         require(_getCollectionOwner(collectionContract) == msg.sender, "Not collection owner");
 
-        // First-time registration
-        if (agents[msg.sender].wallet == address(0)) {
-            agentList.push(msg.sender);
-        }
+        agentList.push(msg.sender);
 
         agents[msg.sender] = AgentRegistration({
             wallet: msg.sender,
